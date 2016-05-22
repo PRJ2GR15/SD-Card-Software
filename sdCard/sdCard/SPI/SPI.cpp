@@ -2,7 +2,7 @@
 // FILENAME : SPI.h
 // CREATED : 22-05-2016
 // AUTHOR : Tonni Follmann
-// DESCR. : Header file for the ardiono SPI driver.
+// DESCR. : Implementation file for the ardiono SPI driver.
 //
 //------------------------------------------------------------------------
 //
