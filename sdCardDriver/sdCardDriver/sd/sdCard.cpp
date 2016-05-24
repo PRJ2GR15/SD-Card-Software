@@ -19,10 +19,8 @@
  
  sdCard::sdCard( int speed ) : spi_obj(125)
  {
-	 
-	 DDRB = DDRB| (1 << SS);
-	 this->speed = speed;
-	  
+	 this->speed = speed; 
+
  }
 
 
@@ -34,6 +32,7 @@
 void sdCard::sendCommand( unsigned char cmdindex, unsigned long argument, unsigned char CRC )
 {
 	unsigned char *argument_byte_pointer = (unsigned char*)&argument; // creating a pointer to extract bytes to be send.
+	spi_obj.writeByte(0xFF); // prepare the sd card by sending 8 clock pulses.
 	spi_obj.writeByte(0b01000000 | cmdindex);
 	spi_obj.writeByte(argument_byte_pointer[0]);
 	spi_obj.writeByte(argument_byte_pointer[1]);
@@ -42,45 +41,146 @@ void sdCard::sendCommand( unsigned char cmdindex, unsigned long argument, unsign
 	spi_obj.writeByte(CRC);
 }
 
-void sdCard::dummyCycles()
-{
-	for(int i = 0; i < 11; i++)
-	{ // generate 80 clock cycles to sync before starting the initiation sequence at lower than 400 kHz as per sd spec
-		spi_obj.writeByte(0xFF);
-	}	
-}
 
-bool sdCard::setSlaveSelect( int sspin )
-{
-	unsigned char mask;
-	switch(sspin)
-	{
-		case 0: 
-			mask = 0b11111110;
-			PORTB = (PINB & mask); // sets SS pin low
-			break;
-		case 1:
-		default:
-			mask = 0b00000001;
-			PORTB = (PINB | mask);
-			break;
-	}	
-}
-
-void sdCard::sendCmd0()
-{
-	sendCommand(0,0x00000000, 0x95);
-}
 
 unsigned char sdCard::getResponeByte()
 {
 	return spi_obj.recieveByte();
+
 }
 
 void sdCard::writeByte( unsigned char bla)
 {
 	spi_obj.writeByte(bla);
 }
+
+bool sdCard::init()
+{
+	_delay_ms(2);
+	PORTB = PINB | 0b00000001; // sets the SS pin ghigh
+	spi_obj.setFreq(125); // frequency during initiation must be lower than 400 kHz.
+	_delay_ms(2); // let the clock settle in.
+	
+	// dummy cycles need to be moved to sdCard class.
+	spi_obj.writeByte(0xFF);
+	spi_obj.writeByte(0xFF);
+	spi_obj.writeByte(0xFF);
+	spi_obj.writeByte(0xFF);
+	spi_obj.writeByte(0xFF);
+	spi_obj.writeByte(0xFF);
+	spi_obj.writeByte(0xFF);
+	spi_obj.writeByte(0xFF);
+	spi_obj.writeByte(0xFF);
+	spi_obj.writeByte(0xFF);
+	
+	unsigned char result = 0x00; // variable to store the result for error checking.
+	do
+	{
+		PORTB = PINB & 0b11111110; // set the SS pin low
+		// CMD0 needs to be moved to SD card class
+		spi_obj.writeByte(0xFF); // dummy byte to let clock sync.
+		spi_obj.writeByte(0x40); // cmd
+		spi_obj.writeByte(0x00); // no argument
+		spi_obj.writeByte(0x00); // no argument
+		spi_obj.writeByte(0x00); // no argument
+		spi_obj.writeByte(0x00); // no argument
+		spi_obj.writeByte(0x95); // CRC
+		spi_obj.recieveByte(); // grab blank return before the real value is extracted
+		result = spi_obj.recieveByte(); // grab R1 return value
+	} while (result == 0xFF);
+	
+	if(result == 0x01)
+	{
+		// CMD8 needs to be moved to SD card class
+		spi_obj.writeByte(0xFF); // Dummy byte to let clock sync
+		spi_obj.writeByte(0x48); // CMD
+		spi_obj.writeByte(0x00); // argument data 4 bytes
+		spi_obj.writeByte(0x00);
+		spi_obj.writeByte(0x01);
+		spi_obj.writeByte(0xAA);
+		spi_obj.writeByte(0x87); // CRC
+		//0x48 00 00 01 AA 87
+	}
+	else
+	{
+		return false;
+	}
+	unsigned char cmd8result[5];
+	spi_obj.recieveByte(); // grab useless data from pause before the real response.
+	for(int i = 0; i < 5; i++)
+	{
+		cmd8result[i] = spi_obj.recieveByte(); // fill in the response array
+	}
+
+	if( cmd8result[0] == 0x01 && cmd8result[1] == 0x00 && cmd8result[2] == 0x00 && cmd8result[3] == 0x01 && cmd8result[4] == 0xAA ) // validate that the card is sd v2
+	{
+		// if cmd8 successfull start initiating the card
+		do // loop fra ACMD41 untill card goes busy.
+		{ 
+		// CMD55 part of ACMD41
+		
+		spi_obj.writeByte(0xFF); // sync byte
+		spi_obj.writeByte(0x77); // CMD 55
+		spi_obj.writeByte(0x00);
+		spi_obj.writeByte(0x00);
+		spi_obj.writeByte(0x00);
+		spi_obj.writeByte(0x00);
+		spi_obj.writeByte(0xFF); // dummy CRC since CRC should be off now;
+		spi_obj.recieveByte();
+		
+		result = spi_obj.recieveByte();
+	
+		//rest of ACMD41
+		spi_obj.writeByte(0xFF);
+		spi_obj.writeByte(0x69); // acmd41
+		spi_obj.writeByte(0x40); // HCS bit set high.
+		spi_obj.writeByte(0x00);
+		spi_obj.writeByte(0x00);
+		spi_obj.writeByte(0x00);
+		spi_obj.writeByte(0xFF); // dummy CRC
+		spi_obj.recieveByte();
+		result = spi_obj.recieveByte();
+		
+		//SendChar(result);
+		} while(result != 0x00); // loop untill card goes busy, indicating the cmd was accepted.
+	
+		// sending command 58 to request OCR register
+		spi_obj.writeByte(0xFF);
+		spi_obj.writeByte(0x7A); // cmd 58
+		spi_obj.writeByte(0x00);
+		spi_obj.writeByte(0x00);
+		spi_obj.writeByte(0x00);
+		spi_obj.writeByte(0x00);
+		spi_obj.writeByte(0xFF); // dummy CRC;
+	
+		unsigned char OCR[4]; // used to store the OCR register
+	
+		spi_obj.recieveByte();
+		spi_obj.recieveByte(); // R1 byte, not using the content of it here, as i'm keeping it simplified.
+		OCR[0] = spi_obj.recieveByte(); // getting the 4 bytes of OCR
+		OCR[1] = spi_obj.recieveByte();
+		OCR[2] = spi_obj.recieveByte();
+		OCR[3] = spi_obj.recieveByte();
+	
+		unsigned char isvalid = OCR[0] & 0b1000000; // getting the validate pin first needs to be high for HC pin to be valid;
+		unsigned char isHC = OCR[0] & 0b01000000; // getting HC pin value.
+		if(isHC && isvalid) 
+		{
+			return true;
+		}
+		else {
+			return false;
+		}	
+	} 
+	else 
+	{
+		return false;
+	}		
+			
+	
+}
+
+
 
 
 

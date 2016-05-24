@@ -3,29 +3,27 @@ sdCardDriver.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000000  00800200  00000740  000007b4  2**0
+  0 .data         00000000  00800200  000007b4  00000828  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         00000740  00000000  00000000  00000074  2**1
+  1 .text         000007b4  00000000  00000000  00000074  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .stab         0000096c  00000000  00000000  000007b4  2**2
+  2 .stab         0000096c  00000000  00000000  00000828  2**2
                   CONTENTS, READONLY, DEBUGGING
-  3 .stabstr      0000014d  00000000  00000000  00001120  2**0
+  3 .stabstr      0000014d  00000000  00000000  00001194  2**0
                   CONTENTS, READONLY, DEBUGGING
-  4 .debug_aranges 00000120  00000000  00000000  00001270  2**3
+  4 .debug_aranges 00000120  00000000  00000000  000012e8  2**3
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   00000e2f  00000000  00000000  00001390  2**0
+  5 .debug_info   00000f1f  00000000  00000000  00001408  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 000005d3  00000000  00000000  000021bf  2**0
+  6 .debug_abbrev 00000653  00000000  00000000  00002327  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   000006ef  00000000  00000000  00002792  2**0
+  7 .debug_line   00000832  00000000  00000000  0000297a  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000218  00000000  00000000  00002e84  2**2
+  8 .debug_frame  000001f8  00000000  00000000  000031ac  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    000003c2  00000000  00000000  0000309c  2**0
+  9 .debug_str    00000371  00000000  00000000  000033a4  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    000005b8  00000000  00000000  0000345e  2**0
-                  CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000018  00000000  00000000  00003a16  2**0
+ 10 .debug_loc    0000055f  00000000  00000000  00003715  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -103,7 +101,7 @@ Disassembly of section .text:
   f4:	12 e0       	ldi	r17, 0x02	; 2
   f6:	a0 e0       	ldi	r26, 0x00	; 0
   f8:	b2 e0       	ldi	r27, 0x02	; 2
-  fa:	e0 e4       	ldi	r30, 0x40	; 64
+  fa:	e4 eb       	ldi	r30, 0xB4	; 180
   fc:	f7 e0       	ldi	r31, 0x07	; 7
   fe:	00 e0       	ldi	r16, 0x00	; 0
  100:	0b bf       	out	0x3b, r16	; 59
@@ -129,1142 +127,1176 @@ Disassembly of section .text:
  11c:	b1 07       	cpc	r27, r17
  11e:	e1 f7       	brne	.-8      	; 0x118 <.do_clear_bss_loop>
  120:	0e 94 96 00 	call	0x12c	; 0x12c <main>
- 124:	0c 94 9e 03 	jmp	0x73c	; 0x73c <_exit>
+ 124:	0c 94 d8 03 	jmp	0x7b0	; 0x7b0 <_exit>
 
 00000128 <__bad_interrupt>:
  128:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
 
 0000012c <main>:
+
 #include "UART/uart.h"
-//#include "sd/sdCard.h"
+#include "sd/sdCard.h"
 #include <util/delay.h>
-#include "SPI/SPI.h"
 int main(void)
 {
- 12c:	cf 92       	push	r12
- 12e:	df 92       	push	r13
- 130:	ef 92       	push	r14
- 132:	ff 92       	push	r15
- 134:	0f 93       	push	r16
- 136:	1f 93       	push	r17
- 138:	cf 93       	push	r28
- 13a:	df 93       	push	r29
- 13c:	00 d0       	rcall	.+0      	; 0x13e <main+0x12>
- 13e:	00 d0       	rcall	.+0      	; 0x140 <main+0x14>
- 140:	cd b7       	in	r28, 0x3d	; 61
- 142:	de b7       	in	r29, 0x3e	; 62
-	//_delay_ms(2);
-InitUART(9600, 8, 0);
- 144:	60 e8       	ldi	r22, 0x80	; 128
- 146:	75 e2       	ldi	r23, 0x25	; 37
- 148:	80 e0       	ldi	r24, 0x00	; 0
- 14a:	90 e0       	ldi	r25, 0x00	; 0
- 14c:	48 e0       	ldi	r20, 0x08	; 8
- 14e:	20 e0       	ldi	r18, 0x00	; 0
- 150:	0e 94 a5 02 	call	0x54a	; 0x54a <_Z8InitUARTmhc>
-	//SendChar(SD_obj.getResponeByte());
-	//SendChar(SD_obj.getResponeByte());
-	//SendChar(SD_obj.getResponeByte());
-	//SendChar(SD_obj.getResponeByte());
-	
-	SPI spi_obj(125);
- 154:	ce 01       	movw	r24, r28
- 156:	01 96       	adiw	r24, 0x01	; 1
- 158:	6d e7       	ldi	r22, 0x7D	; 125
- 15a:	70 e0       	ldi	r23, 0x00	; 0
- 15c:	0e 94 91 02 	call	0x522	; 0x522 <_ZN3SPIC1Ei>
+ 12c:	cf 93       	push	r28
+ 12e:	df 93       	push	r29
+ 130:	00 d0       	rcall	.+0      	; 0x132 <main+0x6>
+ 132:	cd b7       	in	r28, 0x3d	; 61
+ 134:	de b7       	in	r29, 0x3e	; 62
+
+	InitUART(9600, 8, 0);
+ 136:	60 e8       	ldi	r22, 0x80	; 128
+ 138:	75 e2       	ldi	r23, 0x25	; 37
+ 13a:	80 e0       	ldi	r24, 0x00	; 0
+ 13c:	90 e0       	ldi	r25, 0x00	; 0
+ 13e:	48 e0       	ldi	r20, 0x08	; 8
+ 140:	20 e0       	ldi	r18, 0x00	; 0
+ 142:	0e 94 df 02 	call	0x5be	; 0x5be <_Z8InitUARTmhc>
+	sdCard SD_obj(4000);
+ 146:	ce 01       	movw	r24, r28
+ 148:	01 96       	adiw	r24, 0x01	; 1
+ 14a:	60 ea       	ldi	r22, 0xA0	; 160
+ 14c:	7f e0       	ldi	r23, 0x0F	; 15
+ 14e:	0e 94 bd 00 	call	0x17a	; 0x17a <_ZN6sdCardC1Ei>
 	#else
 		//round up by default
 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
 	#endif
 
 	__builtin_avr_delay_cycles(__ticks_dc);
- 160:	8f e3       	ldi	r24, 0x3F	; 63
- 162:	9f e1       	ldi	r25, 0x1F	; 31
- 164:	01 97       	sbiw	r24, 0x01	; 1
- 166:	f1 f7       	brne	.-4      	; 0x164 <main+0x38>
- 168:	00 c0       	rjmp	.+0      	; 0x16a <main+0x3e>
- 16a:	00 00       	nop
-	//spi_obj.recieveByte();
-    //sdCard SD_obj(4000);
-	_delay_ms(2);
-	PORTB = PINB | 0b00000001;
- 16c:	83 b1       	in	r24, 0x03	; 3
- 16e:	81 60       	ori	r24, 0x01	; 1
- 170:	85 b9       	out	0x05, r24	; 5
-	spi_obj.setFreq(125);
- 172:	ce 01       	movw	r24, r28
- 174:	01 96       	adiw	r24, 0x01	; 1
- 176:	6d e7       	ldi	r22, 0x7D	; 125
- 178:	70 e0       	ldi	r23, 0x00	; 0
- 17a:	0e 94 69 02 	call	0x4d2	; 0x4d2 <_ZN3SPI7setFreqEi>
- 17e:	ef e3       	ldi	r30, 0x3F	; 63
- 180:	ff e1       	ldi	r31, 0x1F	; 31
- 182:	31 97       	sbiw	r30, 0x01	; 1
- 184:	f1 f7       	brne	.-4      	; 0x182 <main+0x56>
- 186:	00 c0       	rjmp	.+0      	; 0x188 <main+0x5c>
- 188:	00 00       	nop
-	_delay_ms(2);
-	// dummy cycles need to be moved to sdCard class.
-	spi_obj.writeByte(0xFF);
- 18a:	ce 01       	movw	r24, r28
- 18c:	01 96       	adiw	r24, 0x01	; 1
- 18e:	6f ef       	ldi	r22, 0xFF	; 255
- 190:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-	spi_obj.writeByte(0xFF);
- 194:	ce 01       	movw	r24, r28
- 196:	01 96       	adiw	r24, 0x01	; 1
- 198:	6f ef       	ldi	r22, 0xFF	; 255
- 19a:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-	spi_obj.writeByte(0xFF);
- 19e:	ce 01       	movw	r24, r28
- 1a0:	01 96       	adiw	r24, 0x01	; 1
- 1a2:	6f ef       	ldi	r22, 0xFF	; 255
- 1a4:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-	spi_obj.writeByte(0xFF);
- 1a8:	ce 01       	movw	r24, r28
- 1aa:	01 96       	adiw	r24, 0x01	; 1
- 1ac:	6f ef       	ldi	r22, 0xFF	; 255
- 1ae:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-	spi_obj.writeByte(0xFF);
- 1b2:	ce 01       	movw	r24, r28
- 1b4:	01 96       	adiw	r24, 0x01	; 1
- 1b6:	6f ef       	ldi	r22, 0xFF	; 255
- 1b8:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-	spi_obj.writeByte(0xFF);
- 1bc:	ce 01       	movw	r24, r28
- 1be:	01 96       	adiw	r24, 0x01	; 1
- 1c0:	6f ef       	ldi	r22, 0xFF	; 255
- 1c2:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-	spi_obj.writeByte(0xFF);
- 1c6:	ce 01       	movw	r24, r28
- 1c8:	01 96       	adiw	r24, 0x01	; 1
- 1ca:	6f ef       	ldi	r22, 0xFF	; 255
- 1cc:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-	spi_obj.writeByte(0xFF);
- 1d0:	ce 01       	movw	r24, r28
- 1d2:	01 96       	adiw	r24, 0x01	; 1
- 1d4:	6f ef       	ldi	r22, 0xFF	; 255
- 1d6:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-	spi_obj.writeByte(0xFF);
- 1da:	ce 01       	movw	r24, r28
- 1dc:	01 96       	adiw	r24, 0x01	; 1
- 1de:	6f ef       	ldi	r22, 0xFF	; 255
- 1e0:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-	spi_obj.writeByte(0xFF); 
- 1e4:	ce 01       	movw	r24, r28
- 1e6:	01 96       	adiw	r24, 0x01	; 1
- 1e8:	6f ef       	ldi	r22, 0xFF	; 255
- 1ea:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-	//SendChar(0xAA);
-	//_delay_ms(500);
-	unsigned char result = 0x00;
-	do 
-	{
-	PORTB = PINB & 0b11111110;
- 1ee:	83 b1       	in	r24, 0x03	; 3
- 1f0:	8e 7f       	andi	r24, 0xFE	; 254
- 1f2:	85 b9       	out	0x05, r24	; 5
-	// CMD0 needs to be moved to SD card class
-	spi_obj.writeByte(0xFF);
- 1f4:	ce 01       	movw	r24, r28
- 1f6:	01 96       	adiw	r24, 0x01	; 1
- 1f8:	6f ef       	ldi	r22, 0xFF	; 255
- 1fa:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-	spi_obj.writeByte(0x40);
- 1fe:	ce 01       	movw	r24, r28
- 200:	01 96       	adiw	r24, 0x01	; 1
- 202:	60 e4       	ldi	r22, 0x40	; 64
- 204:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-	spi_obj.writeByte(0x00);
- 208:	ce 01       	movw	r24, r28
- 20a:	01 96       	adiw	r24, 0x01	; 1
- 20c:	60 e0       	ldi	r22, 0x00	; 0
- 20e:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-	spi_obj.writeByte(0x00);
- 212:	ce 01       	movw	r24, r28
- 214:	01 96       	adiw	r24, 0x01	; 1
- 216:	60 e0       	ldi	r22, 0x00	; 0
- 218:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-	spi_obj.writeByte(0x00);
- 21c:	ce 01       	movw	r24, r28
- 21e:	01 96       	adiw	r24, 0x01	; 1
- 220:	60 e0       	ldi	r22, 0x00	; 0
- 222:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-	spi_obj.writeByte(0x00);
- 226:	ce 01       	movw	r24, r28
- 228:	01 96       	adiw	r24, 0x01	; 1
- 22a:	60 e0       	ldi	r22, 0x00	; 0
- 22c:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-	spi_obj.writeByte(0x95);
- 230:	ce 01       	movw	r24, r28
- 232:	01 96       	adiw	r24, 0x01	; 1
- 234:	65 e9       	ldi	r22, 0x95	; 149
- 236:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-	spi_obj.recieveByte();
- 23a:	ce 01       	movw	r24, r28
- 23c:	01 96       	adiw	r24, 0x01	; 1
- 23e:	0e 94 9e 02 	call	0x53c	; 0x53c <_ZN3SPI11recieveByteEv>
-	result = spi_obj.recieveByte();
- 242:	ce 01       	movw	r24, r28
- 244:	01 96       	adiw	r24, 0x01	; 1
- 246:	0e 94 9e 02 	call	0x53c	; 0x53c <_ZN3SPI11recieveByteEv>
-	spi_obj.writeByte(0xFF);
-	spi_obj.writeByte(0xFF); 
-	//SendChar(0xAA);
-	//_delay_ms(500);
-	unsigned char result = 0x00;
-	do 
- 24a:	8f 3f       	cpi	r24, 0xFF	; 255
- 24c:	81 f2       	breq	.-96     	; 0x1ee <main+0xc2>
-	result = spi_obj.recieveByte();
-	} while (result == 0xFF);
-	    ////TODO:: Please write your application code 
-	//_delay_ms(500);
-    //SendChar(result);
-	if(result == 0x01){
- 24e:	81 30       	cpi	r24, 0x01	; 1
- 250:	21 f5       	brne	.+72     	; 0x29a <main+0x16e>
-	// CMD8 needs to be moved to SD card class
-		spi_obj.writeByte(0xFF);
- 252:	ce 01       	movw	r24, r28
- 254:	01 96       	adiw	r24, 0x01	; 1
- 256:	6f ef       	ldi	r22, 0xFF	; 255
- 258:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-		spi_obj.writeByte(0x48);
- 25c:	ce 01       	movw	r24, r28
- 25e:	01 96       	adiw	r24, 0x01	; 1
- 260:	68 e4       	ldi	r22, 0x48	; 72
- 262:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-		spi_obj.writeByte(0x00);
- 266:	ce 01       	movw	r24, r28
- 268:	01 96       	adiw	r24, 0x01	; 1
- 26a:	60 e0       	ldi	r22, 0x00	; 0
- 26c:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-		spi_obj.writeByte(0x00);
- 270:	ce 01       	movw	r24, r28
- 272:	01 96       	adiw	r24, 0x01	; 1
- 274:	60 e0       	ldi	r22, 0x00	; 0
- 276:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-		spi_obj.writeByte(0x01);
- 27a:	ce 01       	movw	r24, r28
- 27c:	01 96       	adiw	r24, 0x01	; 1
- 27e:	61 e0       	ldi	r22, 0x01	; 1
- 280:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-		spi_obj.writeByte(0xAA);
- 284:	ce 01       	movw	r24, r28
- 286:	01 96       	adiw	r24, 0x01	; 1
- 288:	6a ea       	ldi	r22, 0xAA	; 170
- 28a:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-		spi_obj.writeByte(0x87);
- 28e:	ce 01       	movw	r24, r28
- 290:	01 96       	adiw	r24, 0x01	; 1
- 292:	67 e8       	ldi	r22, 0x87	; 135
- 294:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
- 298:	03 c0       	rjmp	.+6      	; 0x2a0 <main+0x174>
-		//0x48 00 00 01 AA 87
-	}else{
-		SendChar(0xBB);
- 29a:	8b eb       	ldi	r24, 0xBB	; 187
- 29c:	0e 94 02 03 	call	0x604	; 0x604 <_Z8SendCharc>
-	}
-	unsigned char cmd8result[5];
-	spi_obj.recieveByte();
- 2a0:	ce 01       	movw	r24, r28
- 2a2:	01 96       	adiw	r24, 0x01	; 1
- 2a4:	0e 94 9e 02 	call	0x53c	; 0x53c <_ZN3SPI11recieveByteEv>
- 2a8:	ee 24       	eor	r14, r14
- 2aa:	ff 24       	eor	r15, r15
- 2ac:	68 94       	set
- 2ae:	e1 f8       	bld	r14, 1
- 2b0:	ec 0e       	add	r14, r28
- 2b2:	fd 1e       	adc	r15, r29
+ 152:	8f e3       	ldi	r24, 0x3F	; 63
+ 154:	9c e9       	ldi	r25, 0x9C	; 156
+ 156:	01 97       	sbiw	r24, 0x01	; 1
+ 158:	f1 f7       	brne	.-4      	; 0x156 <main+0x2a>
+ 15a:	00 c0       	rjmp	.+0      	; 0x15c <main+0x30>
+ 15c:	00 00       	nop
+	_delay_ms(10);
+	SendChar(SD_obj.init());
+ 15e:	ce 01       	movw	r24, r28
+ 160:	01 96       	adiw	r24, 0x01	; 1
+ 162:	0e 94 12 01 	call	0x224	; 0x224 <_ZN6sdCard4initEv>
+ 166:	0e 94 3c 03 	call	0x678	; 0x678 <_Z8SendCharc>
 
-#include "UART/uart.h"
-//#include "sd/sdCard.h"
-#include <util/delay.h>
-#include "SPI/SPI.h"
-int main(void)
- 2b4:	8e 01       	movw	r16, r28
- 2b6:	09 5f       	subi	r16, 0xF9	; 249
- 2b8:	1f 4f       	sbci	r17, 0xFF	; 255
- 2ba:	67 01       	movw	r12, r14
-		SendChar(0xBB);
-	}
-	unsigned char cmd8result[5];
-	spi_obj.recieveByte();
-	for(int i = 0; i < 5; i++){
-		cmd8result[i] = spi_obj.recieveByte();
- 2bc:	ce 01       	movw	r24, r28
- 2be:	01 96       	adiw	r24, 0x01	; 1
- 2c0:	0e 94 9e 02 	call	0x53c	; 0x53c <_ZN3SPI11recieveByteEv>
- 2c4:	f6 01       	movw	r30, r12
- 2c6:	81 93       	st	Z+, r24
- 2c8:	6f 01       	movw	r12, r30
-	}else{
-		SendChar(0xBB);
-	}
-	unsigned char cmd8result[5];
-	spi_obj.recieveByte();
-	for(int i = 0; i < 5; i++){
- 2ca:	e0 17       	cp	r30, r16
- 2cc:	f1 07       	cpc	r31, r17
- 2ce:	b1 f7       	brne	.-20     	; 0x2bc <main+0x190>
-		cmd8result[i] = spi_obj.recieveByte();
-	}
-	for(int i = 0; i < 5; i++){
-		SendChar(cmd8result[i]);
- 2d0:	f7 01       	movw	r30, r14
- 2d2:	81 91       	ld	r24, Z+
- 2d4:	7f 01       	movw	r14, r30
- 2d6:	0e 94 02 03 	call	0x604	; 0x604 <_Z8SendCharc>
-	unsigned char cmd8result[5];
-	spi_obj.recieveByte();
-	for(int i = 0; i < 5; i++){
-		cmd8result[i] = spi_obj.recieveByte();
-	}
-	for(int i = 0; i < 5; i++){
- 2da:	e0 16       	cp	r14, r16
- 2dc:	f1 06       	cpc	r15, r17
- 2de:	c1 f7       	brne	.-16     	; 0x2d0 <main+0x1a4>
-		SendChar(cmd8result[i]);
-	}
-	if( cmd8result[0] == 0x01 && cmd8result[1] == 0x00 && cmd8result[2] == 0x00 && cmd8result[3] == 0x01 && cmd8result[4] == 0xAA ){
- 2e0:	8a 81       	ldd	r24, Y+2	; 0x02
- 2e2:	81 30       	cpi	r24, 0x01	; 1
- 2e4:	09 f0       	breq	.+2      	; 0x2e8 <main+0x1bc>
- 2e6:	70 c0       	rjmp	.+224    	; 0x3c8 <main+0x29c>
- 2e8:	8b 81       	ldd	r24, Y+3	; 0x03
- 2ea:	88 23       	and	r24, r24
- 2ec:	09 f0       	breq	.+2      	; 0x2f0 <main+0x1c4>
- 2ee:	6c c0       	rjmp	.+216    	; 0x3c8 <main+0x29c>
- 2f0:	8c 81       	ldd	r24, Y+4	; 0x04
- 2f2:	88 23       	and	r24, r24
- 2f4:	09 f0       	breq	.+2      	; 0x2f8 <main+0x1cc>
- 2f6:	68 c0       	rjmp	.+208    	; 0x3c8 <main+0x29c>
- 2f8:	8d 81       	ldd	r24, Y+5	; 0x05
- 2fa:	81 30       	cpi	r24, 0x01	; 1
- 2fc:	09 f0       	breq	.+2      	; 0x300 <main+0x1d4>
- 2fe:	64 c0       	rjmp	.+200    	; 0x3c8 <main+0x29c>
- 300:	8e 81       	ldd	r24, Y+6	; 0x06
- 302:	8a 3a       	cpi	r24, 0xAA	; 170
- 304:	09 f0       	breq	.+2      	; 0x308 <main+0x1dc>
- 306:	60 c0       	rjmp	.+192    	; 0x3c8 <main+0x29c>
-		do{
-		
-			//do {
-			// CMD55 part of ACMD41
-		
-			spi_obj.writeByte(0xFF); // sync byte
- 308:	ce 01       	movw	r24, r28
- 30a:	01 96       	adiw	r24, 0x01	; 1
- 30c:	6f ef       	ldi	r22, 0xFF	; 255
- 30e:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-			spi_obj.writeByte(0x77);
- 312:	ce 01       	movw	r24, r28
- 314:	01 96       	adiw	r24, 0x01	; 1
- 316:	67 e7       	ldi	r22, 0x77	; 119
- 318:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-			spi_obj.writeByte(0x00);
- 31c:	ce 01       	movw	r24, r28
- 31e:	01 96       	adiw	r24, 0x01	; 1
- 320:	60 e0       	ldi	r22, 0x00	; 0
- 322:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-			spi_obj.writeByte(0x00);
- 326:	ce 01       	movw	r24, r28
- 328:	01 96       	adiw	r24, 0x01	; 1
- 32a:	60 e0       	ldi	r22, 0x00	; 0
- 32c:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-			spi_obj.writeByte(0x00);
- 330:	ce 01       	movw	r24, r28
- 332:	01 96       	adiw	r24, 0x01	; 1
- 334:	60 e0       	ldi	r22, 0x00	; 0
- 336:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-			spi_obj.writeByte(0x00);
- 33a:	ce 01       	movw	r24, r28
- 33c:	01 96       	adiw	r24, 0x01	; 1
- 33e:	60 e0       	ldi	r22, 0x00	; 0
- 340:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-			spi_obj.writeByte(0xFF); // dummy CRC since CRC should be off now;
- 344:	ce 01       	movw	r24, r28
- 346:	01 96       	adiw	r24, 0x01	; 1
- 348:	6f ef       	ldi	r22, 0xFF	; 255
- 34a:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-			spi_obj.recieveByte();
- 34e:	ce 01       	movw	r24, r28
- 350:	01 96       	adiw	r24, 0x01	; 1
- 352:	0e 94 9e 02 	call	0x53c	; 0x53c <_ZN3SPI11recieveByteEv>
-		
-			result = spi_obj.recieveByte();
- 356:	ce 01       	movw	r24, r28
- 358:	01 96       	adiw	r24, 0x01	; 1
- 35a:	0e 94 9e 02 	call	0x53c	; 0x53c <_ZN3SPI11recieveByteEv>
-			SendChar(result);
- 35e:	0e 94 02 03 	call	0x604	; 0x604 <_Z8SendCharc>
-			//} while(result != 0x01);
-		
-		//rest of ACMD41
-		spi_obj.writeByte(0xFF);
- 362:	ce 01       	movw	r24, r28
- 364:	01 96       	adiw	r24, 0x01	; 1
- 366:	6f ef       	ldi	r22, 0xFF	; 255
- 368:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-		spi_obj.writeByte(0x69); // acmd41
- 36c:	ce 01       	movw	r24, r28
- 36e:	01 96       	adiw	r24, 0x01	; 1
- 370:	69 e6       	ldi	r22, 0x69	; 105
- 372:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-		spi_obj.writeByte(0x40); // HCS bit set high.
- 376:	ce 01       	movw	r24, r28
- 378:	01 96       	adiw	r24, 0x01	; 1
- 37a:	60 e4       	ldi	r22, 0x40	; 64
- 37c:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-		spi_obj.writeByte(0x00);
- 380:	ce 01       	movw	r24, r28
- 382:	01 96       	adiw	r24, 0x01	; 1
- 384:	60 e0       	ldi	r22, 0x00	; 0
- 386:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-		spi_obj.writeByte(0x00);
- 38a:	ce 01       	movw	r24, r28
- 38c:	01 96       	adiw	r24, 0x01	; 1
- 38e:	60 e0       	ldi	r22, 0x00	; 0
- 390:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-		spi_obj.writeByte(0x00);
- 394:	ce 01       	movw	r24, r28
- 396:	01 96       	adiw	r24, 0x01	; 1
- 398:	60 e0       	ldi	r22, 0x00	; 0
- 39a:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-		spi_obj.writeByte(0xFF); // dummy CRC
- 39e:	ce 01       	movw	r24, r28
- 3a0:	01 96       	adiw	r24, 0x01	; 1
- 3a2:	6f ef       	ldi	r22, 0xFF	; 255
- 3a4:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
-		
-		result = spi_obj.recieveByte();
- 3a8:	ce 01       	movw	r24, r28
- 3aa:	01 96       	adiw	r24, 0x01	; 1
- 3ac:	0e 94 9e 02 	call	0x53c	; 0x53c <_ZN3SPI11recieveByteEv>
-		SendChar(result);
- 3b0:	0e 94 02 03 	call	0x604	; 0x604 <_Z8SendCharc>
-		result = spi_obj.recieveByte();
- 3b4:	ce 01       	movw	r24, r28
- 3b6:	01 96       	adiw	r24, 0x01	; 1
- 3b8:	0e 94 9e 02 	call	0x53c	; 0x53c <_ZN3SPI11recieveByteEv>
- 3bc:	08 2f       	mov	r16, r24
-		
-		SendChar(result);
- 3be:	0e 94 02 03 	call	0x604	; 0x604 <_Z8SendCharc>
-	for(int i = 0; i < 5; i++){
-		SendChar(cmd8result[i]);
-	}
-	if( cmd8result[0] == 0x01 && cmd8result[1] == 0x00 && cmd8result[2] == 0x00 && cmd8result[3] == 0x01 && cmd8result[4] == 0xAA ){
-		// if cmd8 successfull start initiating the card
-		do{
- 3c2:	00 23       	and	r16, r16
- 3c4:	09 f0       	breq	.+2      	; 0x3c8 <main+0x29c>
- 3c6:	a0 cf       	rjmp	.-192    	; 0x308 <main+0x1dc>
-	//_delay_ms(200);
-	//SD_obj.setSlaveSelect(1);
-	//PORTB = 0b11111111;
-	//_delay_ms(1000);
+ 16a:	80 e0       	ldi	r24, 0x00	; 0
+ 16c:	90 e0       	ldi	r25, 0x00	; 0
+ 16e:	0f 90       	pop	r0
+ 170:	0f 90       	pop	r0
+ 172:	0f 90       	pop	r0
+ 174:	df 91       	pop	r29
+ 176:	cf 91       	pop	r28
+ 178:	08 95       	ret
 
- 3c8:	80 e0       	ldi	r24, 0x00	; 0
- 3ca:	90 e0       	ldi	r25, 0x00	; 0
- 3cc:	26 96       	adiw	r28, 0x06	; 6
- 3ce:	0f b6       	in	r0, 0x3f	; 63
- 3d0:	f8 94       	cli
- 3d2:	de bf       	out	0x3e, r29	; 62
- 3d4:	0f be       	out	0x3f, r0	; 63
- 3d6:	cd bf       	out	0x3d, r28	; 61
- 3d8:	df 91       	pop	r29
- 3da:	cf 91       	pop	r28
- 3dc:	1f 91       	pop	r17
- 3de:	0f 91       	pop	r16
- 3e0:	ff 90       	pop	r15
- 3e2:	ef 90       	pop	r14
- 3e4:	df 90       	pop	r13
- 3e6:	cf 90       	pop	r12
- 3e8:	08 95       	ret
-
-000003ea <_ZN6sdCardC1Ei>:
+0000017a <_ZN6sdCardC1Ei>:
  // METHOD : sdCard Constructor
  // DESCR. : runs the initiation sequence of the sd card and sets 
  // SPI to the supplied speed
  //=============================================================
  
  sdCard::sdCard( int speed ) : spi_obj(125)
- 3ea:	0f 93       	push	r16
- 3ec:	1f 93       	push	r17
- 3ee:	cf 93       	push	r28
- 3f0:	df 93       	push	r29
- 3f2:	ec 01       	movw	r28, r24
- 3f4:	8b 01       	movw	r16, r22
- 3f6:	6d e7       	ldi	r22, 0x7D	; 125
- 3f8:	70 e0       	ldi	r23, 0x00	; 0
- 3fa:	0e 94 91 02 	call	0x522	; 0x522 <_ZN3SPIC1Ei>
+ 17a:	0f 93       	push	r16
+ 17c:	1f 93       	push	r17
+ 17e:	cf 93       	push	r28
+ 180:	df 93       	push	r29
+ 182:	ec 01       	movw	r28, r24
+ 184:	8b 01       	movw	r16, r22
+ 186:	6d e7       	ldi	r22, 0x7D	; 125
+ 188:	70 e0       	ldi	r23, 0x00	; 0
+ 18a:	0e 94 cb 02 	call	0x596	; 0x596 <_ZN3SPIC1Ei>
  {
-	 
-	 DDRB = DDRB| (1 << SS);
- 3fe:	20 9a       	sbi	0x04, 0	; 4
-	 this->speed = speed;
- 400:	1a 83       	std	Y+2, r17	; 0x02
- 402:	09 83       	std	Y+1, r16	; 0x01
-	  
- }
- 404:	df 91       	pop	r29
- 406:	cf 91       	pop	r28
- 408:	1f 91       	pop	r17
- 40a:	0f 91       	pop	r16
- 40c:	08 95       	ret
+	 this->speed = speed; 
+ 18e:	1a 83       	std	Y+2, r17	; 0x02
+ 190:	09 83       	std	Y+1, r16	; 0x01
 
-0000040e <_ZN6sdCard11sendCommandEhmh>:
+ }
+ 192:	df 91       	pop	r29
+ 194:	cf 91       	pop	r28
+ 196:	1f 91       	pop	r17
+ 198:	0f 91       	pop	r16
+ 19a:	08 95       	ret
+
+0000019c <_ZN6sdCard11sendCommandEhmh>:
 // METHOD : sendCommand
 // DESCR. : takes a cmd index, an argument and a CRC and creates
 // and sends the command to the sd card.
 //=============================================================
 void sdCard::sendCommand( unsigned char cmdindex, unsigned long argument, unsigned char CRC )
 {
- 40e:	ff 92       	push	r15
- 410:	0f 93       	push	r16
- 412:	1f 93       	push	r17
- 414:	cf 93       	push	r28
- 416:	df 93       	push	r29
- 418:	00 d0       	rcall	.+0      	; 0x41a <_ZN6sdCard11sendCommandEhmh+0xc>
- 41a:	0f 92       	push	r0
- 41c:	cd b7       	in	r28, 0x3d	; 61
- 41e:	de b7       	in	r29, 0x3e	; 62
- 420:	f8 2e       	mov	r15, r24
- 422:	19 2f       	mov	r17, r25
- 424:	29 83       	std	Y+1, r18	; 0x01
- 426:	3a 83       	std	Y+2, r19	; 0x02
- 428:	4b 83       	std	Y+3, r20	; 0x03
- 42a:	5c 83       	std	Y+4, r21	; 0x04
+ 19c:	ef 92       	push	r14
+ 19e:	ff 92       	push	r15
+ 1a0:	0f 93       	push	r16
+ 1a2:	1f 93       	push	r17
+ 1a4:	cf 93       	push	r28
+ 1a6:	df 93       	push	r29
+ 1a8:	00 d0       	rcall	.+0      	; 0x1aa <_ZN6sdCard11sendCommandEhmh+0xe>
+ 1aa:	0f 92       	push	r0
+ 1ac:	cd b7       	in	r28, 0x3d	; 61
+ 1ae:	de b7       	in	r29, 0x3e	; 62
+ 1b0:	18 2f       	mov	r17, r24
+ 1b2:	e9 2e       	mov	r14, r25
+ 1b4:	f6 2e       	mov	r15, r22
+ 1b6:	29 83       	std	Y+1, r18	; 0x01
+ 1b8:	3a 83       	std	Y+2, r19	; 0x02
+ 1ba:	4b 83       	std	Y+3, r20	; 0x03
+ 1bc:	5c 83       	std	Y+4, r21	; 0x04
 	unsigned char *argument_byte_pointer = (unsigned char*)&argument; // creating a pointer to extract bytes to be send.
+	spi_obj.writeByte(0xFF); // prepare the sd card by sending 8 clock pulses.
+ 1be:	6f ef       	ldi	r22, 0xFF	; 255
+ 1c0:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
 	spi_obj.writeByte(0b01000000 | cmdindex);
- 42c:	60 64       	ori	r22, 0x40	; 64
- 42e:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
+ 1c4:	6f 2d       	mov	r22, r15
+ 1c6:	60 64       	ori	r22, 0x40	; 64
+ 1c8:	81 2f       	mov	r24, r17
+ 1ca:	9e 2d       	mov	r25, r14
+ 1cc:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
 	spi_obj.writeByte(argument_byte_pointer[0]);
- 432:	8f 2d       	mov	r24, r15
- 434:	91 2f       	mov	r25, r17
- 436:	69 81       	ldd	r22, Y+1	; 0x01
- 438:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
+ 1d0:	81 2f       	mov	r24, r17
+ 1d2:	9e 2d       	mov	r25, r14
+ 1d4:	69 81       	ldd	r22, Y+1	; 0x01
+ 1d6:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
 	spi_obj.writeByte(argument_byte_pointer[1]);
- 43c:	8f 2d       	mov	r24, r15
- 43e:	91 2f       	mov	r25, r17
- 440:	6a 81       	ldd	r22, Y+2	; 0x02
- 442:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
+ 1da:	81 2f       	mov	r24, r17
+ 1dc:	9e 2d       	mov	r25, r14
+ 1de:	6a 81       	ldd	r22, Y+2	; 0x02
+ 1e0:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
 	spi_obj.writeByte(argument_byte_pointer[3]);
- 446:	8f 2d       	mov	r24, r15
- 448:	91 2f       	mov	r25, r17
- 44a:	6c 81       	ldd	r22, Y+4	; 0x04
- 44c:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
+ 1e4:	81 2f       	mov	r24, r17
+ 1e6:	9e 2d       	mov	r25, r14
+ 1e8:	6c 81       	ldd	r22, Y+4	; 0x04
+ 1ea:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
 	spi_obj.writeByte(argument_byte_pointer[4]);
- 450:	8f 2d       	mov	r24, r15
- 452:	91 2f       	mov	r25, r17
- 454:	6d 81       	ldd	r22, Y+5	; 0x05
- 456:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
+ 1ee:	81 2f       	mov	r24, r17
+ 1f0:	9e 2d       	mov	r25, r14
+ 1f2:	6d 81       	ldd	r22, Y+5	; 0x05
+ 1f4:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
 	spi_obj.writeByte(CRC);
- 45a:	8f 2d       	mov	r24, r15
- 45c:	91 2f       	mov	r25, r17
- 45e:	60 2f       	mov	r22, r16
- 460:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
+ 1f8:	81 2f       	mov	r24, r17
+ 1fa:	9e 2d       	mov	r25, r14
+ 1fc:	60 2f       	mov	r22, r16
+ 1fe:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
 }
- 464:	0f 90       	pop	r0
- 466:	0f 90       	pop	r0
- 468:	0f 90       	pop	r0
- 46a:	0f 90       	pop	r0
- 46c:	df 91       	pop	r29
- 46e:	cf 91       	pop	r28
- 470:	1f 91       	pop	r17
- 472:	0f 91       	pop	r16
- 474:	ff 90       	pop	r15
- 476:	08 95       	ret
+ 202:	0f 90       	pop	r0
+ 204:	0f 90       	pop	r0
+ 206:	0f 90       	pop	r0
+ 208:	0f 90       	pop	r0
+ 20a:	df 91       	pop	r29
+ 20c:	cf 91       	pop	r28
+ 20e:	1f 91       	pop	r17
+ 210:	0f 91       	pop	r16
+ 212:	ff 90       	pop	r15
+ 214:	ef 90       	pop	r14
+ 216:	08 95       	ret
 
-00000478 <_ZN6sdCard11dummyCyclesEv>:
+00000218 <_ZN6sdCard14getResponeByteEv>:
 
-void sdCard::dummyCycles()
-{
- 478:	0f 93       	push	r16
- 47a:	1f 93       	push	r17
- 47c:	cf 93       	push	r28
- 47e:	df 93       	push	r29
- 480:	8c 01       	movw	r16, r24
- 482:	cb e0       	ldi	r28, 0x0B	; 11
- 484:	d0 e0       	ldi	r29, 0x00	; 0
-	for(int i = 0; i < 11; i++)
-	{ // generate 80 clock cycles to sync before starting the initiation sequence at lower than 400 kHz as per sd spec
-		spi_obj.writeByte(0xFF);
- 486:	c8 01       	movw	r24, r16
- 488:	6f ef       	ldi	r22, 0xFF	; 255
- 48a:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
- 48e:	21 97       	sbiw	r28, 0x01	; 1
-	spi_obj.writeByte(CRC);
-}
 
-void sdCard::dummyCycles()
-{
-	for(int i = 0; i < 11; i++)
- 490:	d1 f7       	brne	.-12     	; 0x486 <_ZN6sdCard11dummyCyclesEv+0xe>
-	{ // generate 80 clock cycles to sync before starting the initiation sequence at lower than 400 kHz as per sd spec
-		spi_obj.writeByte(0xFF);
-	}	
-}
- 492:	df 91       	pop	r29
- 494:	cf 91       	pop	r28
- 496:	1f 91       	pop	r17
- 498:	0f 91       	pop	r16
- 49a:	08 95       	ret
-
-0000049c <_ZN6sdCard14setSlaveSelectEi>:
-
-bool sdCard::setSlaveSelect( int sspin )
-{
-	unsigned char mask;
-	switch(sspin)
- 49c:	61 15       	cp	r22, r1
- 49e:	71 05       	cpc	r23, r1
- 4a0:	21 f4       	brne	.+8      	; 0x4aa <_ZN6sdCard14setSlaveSelectEi+0xe>
-	{
-		case 0: 
-			mask = 0b11111110;
-			PORTB = (PINB & mask); // sets SS pin low
- 4a2:	83 b1       	in	r24, 0x03	; 3
- 4a4:	8e 7f       	andi	r24, 0xFE	; 254
- 4a6:	85 b9       	out	0x05, r24	; 5
-			break;
- 4a8:	08 95       	ret
-		case 1:
-		default:
-			mask = 0b00000001;
-			PORTB = (PINB | mask);
- 4aa:	83 b1       	in	r24, 0x03	; 3
- 4ac:	81 60       	ori	r24, 0x01	; 1
- 4ae:	85 b9       	out	0x05, r24	; 5
-			break;
-	}	
-}
- 4b0:	08 95       	ret
-
-000004b2 <_ZN6sdCard8sendCmd0Ev>:
-
-void sdCard::sendCmd0()
-{
- 4b2:	0f 93       	push	r16
-	sendCommand(0,0x00000000, 0x95);
- 4b4:	60 e0       	ldi	r22, 0x00	; 0
- 4b6:	20 e0       	ldi	r18, 0x00	; 0
- 4b8:	30 e0       	ldi	r19, 0x00	; 0
- 4ba:	a9 01       	movw	r20, r18
- 4bc:	05 e9       	ldi	r16, 0x95	; 149
- 4be:	0e 94 07 02 	call	0x40e	; 0x40e <_ZN6sdCard11sendCommandEhmh>
-}
- 4c2:	0f 91       	pop	r16
- 4c4:	08 95       	ret
-
-000004c6 <_ZN6sdCard14getResponeByteEv>:
 
 unsigned char sdCard::getResponeByte()
 {
 	return spi_obj.recieveByte();
- 4c6:	0e 94 9e 02 	call	0x53c	; 0x53c <_ZN3SPI11recieveByteEv>
-}
- 4ca:	08 95       	ret
+ 218:	0e 94 d8 02 	call	0x5b0	; 0x5b0 <_ZN3SPI11recieveByteEv>
 
-000004cc <_ZN6sdCard9writeByteEh>:
+}
+ 21c:	08 95       	ret
+
+0000021e <_ZN6sdCard9writeByteEh>:
 
 void sdCard::writeByte( unsigned char bla)
 {
 	spi_obj.writeByte(bla);
- 4cc:	0e 94 98 02 	call	0x530	; 0x530 <_ZN3SPI9writeByteEh>
+ 21e:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
 }
- 4d0:	08 95       	ret
+ 222:	08 95       	ret
 
-000004d2 <_ZN3SPI7setFreqEi>:
+00000224 <_ZN6sdCard4initEv>:
+
+bool sdCard::init()
+{
+ 224:	af 92       	push	r10
+ 226:	bf 92       	push	r11
+ 228:	cf 92       	push	r12
+ 22a:	df 92       	push	r13
+ 22c:	ef 92       	push	r14
+ 22e:	ff 92       	push	r15
+ 230:	0f 93       	push	r16
+ 232:	1f 93       	push	r17
+ 234:	cf 93       	push	r28
+ 236:	df 93       	push	r29
+ 238:	00 d0       	rcall	.+0      	; 0x23a <_ZN6sdCard4initEv+0x16>
+ 23a:	0f 92       	push	r0
+ 23c:	0f 92       	push	r0
+ 23e:	cd b7       	in	r28, 0x3d	; 61
+ 240:	de b7       	in	r29, 0x3e	; 62
+ 242:	b8 2e       	mov	r11, r24
+ 244:	a9 2e       	mov	r10, r25
+ 246:	83 ef       	ldi	r24, 0xF3	; 243
+ 248:	91 e0       	ldi	r25, 0x01	; 1
+ 24a:	01 97       	sbiw	r24, 0x01	; 1
+ 24c:	f1 f7       	brne	.-4      	; 0x24a <_ZN6sdCard4initEv+0x26>
+ 24e:	00 c0       	rjmp	.+0      	; 0x250 <_ZN6sdCard4initEv+0x2c>
+ 250:	00 00       	nop
+	_delay_ms(2);
+	PORTB = PINB | 0b00000001; // sets the SS pin ghigh
+ 252:	83 b1       	in	r24, 0x03	; 3
+ 254:	81 60       	ori	r24, 0x01	; 1
+ 256:	85 b9       	out	0x05, r24	; 5
+	spi_obj.setFreq(125); // frequency during initiation must be lower than 400 kHz.
+ 258:	cb 2c       	mov	r12, r11
+ 25a:	da 2c       	mov	r13, r10
+ 25c:	8b 2d       	mov	r24, r11
+ 25e:	9a 2d       	mov	r25, r10
+ 260:	6d e7       	ldi	r22, 0x7D	; 125
+ 262:	70 e0       	ldi	r23, 0x00	; 0
+ 264:	0e 94 a3 02 	call	0x546	; 0x546 <_ZN3SPI7setFreqEi>
+ 268:	e3 ef       	ldi	r30, 0xF3	; 243
+ 26a:	f1 e0       	ldi	r31, 0x01	; 1
+ 26c:	31 97       	sbiw	r30, 0x01	; 1
+ 26e:	f1 f7       	brne	.-4      	; 0x26c <_ZN6sdCard4initEv+0x48>
+ 270:	00 c0       	rjmp	.+0      	; 0x272 <_ZN6sdCard4initEv+0x4e>
+ 272:	00 00       	nop
+	_delay_ms(2); // let the clock settle in.
+	
+	// dummy cycles need to be moved to sdCard class.
+	spi_obj.writeByte(0xFF);
+ 274:	8b 2d       	mov	r24, r11
+ 276:	9a 2d       	mov	r25, r10
+ 278:	6f ef       	ldi	r22, 0xFF	; 255
+ 27a:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+	spi_obj.writeByte(0xFF);
+ 27e:	8b 2d       	mov	r24, r11
+ 280:	9a 2d       	mov	r25, r10
+ 282:	6f ef       	ldi	r22, 0xFF	; 255
+ 284:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+	spi_obj.writeByte(0xFF);
+ 288:	8b 2d       	mov	r24, r11
+ 28a:	9a 2d       	mov	r25, r10
+ 28c:	6f ef       	ldi	r22, 0xFF	; 255
+ 28e:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+	spi_obj.writeByte(0xFF);
+ 292:	8b 2d       	mov	r24, r11
+ 294:	9a 2d       	mov	r25, r10
+ 296:	6f ef       	ldi	r22, 0xFF	; 255
+ 298:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+	spi_obj.writeByte(0xFF);
+ 29c:	8b 2d       	mov	r24, r11
+ 29e:	9a 2d       	mov	r25, r10
+ 2a0:	6f ef       	ldi	r22, 0xFF	; 255
+ 2a2:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+	spi_obj.writeByte(0xFF);
+ 2a6:	8b 2d       	mov	r24, r11
+ 2a8:	9a 2d       	mov	r25, r10
+ 2aa:	6f ef       	ldi	r22, 0xFF	; 255
+ 2ac:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+	spi_obj.writeByte(0xFF);
+ 2b0:	8b 2d       	mov	r24, r11
+ 2b2:	9a 2d       	mov	r25, r10
+ 2b4:	6f ef       	ldi	r22, 0xFF	; 255
+ 2b6:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+	spi_obj.writeByte(0xFF);
+ 2ba:	8b 2d       	mov	r24, r11
+ 2bc:	9a 2d       	mov	r25, r10
+ 2be:	6f ef       	ldi	r22, 0xFF	; 255
+ 2c0:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+	spi_obj.writeByte(0xFF);
+ 2c4:	8b 2d       	mov	r24, r11
+ 2c6:	9a 2d       	mov	r25, r10
+ 2c8:	6f ef       	ldi	r22, 0xFF	; 255
+ 2ca:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+	spi_obj.writeByte(0xFF);
+ 2ce:	8b 2d       	mov	r24, r11
+ 2d0:	9a 2d       	mov	r25, r10
+ 2d2:	6f ef       	ldi	r22, 0xFF	; 255
+ 2d4:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+	
+	unsigned char result = 0x00; // variable to store the result for error checking.
+	do
+	{
+		PORTB = PINB & 0b11111110; // set the SS pin low
+ 2d8:	83 b1       	in	r24, 0x03	; 3
+ 2da:	8e 7f       	andi	r24, 0xFE	; 254
+ 2dc:	85 b9       	out	0x05, r24	; 5
+		// CMD0 needs to be moved to SD card class
+		spi_obj.writeByte(0xFF); // dummy byte to let clock sync.
+ 2de:	8c 2d       	mov	r24, r12
+ 2e0:	9d 2d       	mov	r25, r13
+ 2e2:	6f ef       	ldi	r22, 0xFF	; 255
+ 2e4:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x40); // cmd
+ 2e8:	8c 2d       	mov	r24, r12
+ 2ea:	9d 2d       	mov	r25, r13
+ 2ec:	60 e4       	ldi	r22, 0x40	; 64
+ 2ee:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x00); // no argument
+ 2f2:	8c 2d       	mov	r24, r12
+ 2f4:	9d 2d       	mov	r25, r13
+ 2f6:	60 e0       	ldi	r22, 0x00	; 0
+ 2f8:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x00); // no argument
+ 2fc:	8c 2d       	mov	r24, r12
+ 2fe:	9d 2d       	mov	r25, r13
+ 300:	60 e0       	ldi	r22, 0x00	; 0
+ 302:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x00); // no argument
+ 306:	8c 2d       	mov	r24, r12
+ 308:	9d 2d       	mov	r25, r13
+ 30a:	60 e0       	ldi	r22, 0x00	; 0
+ 30c:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x00); // no argument
+ 310:	8c 2d       	mov	r24, r12
+ 312:	9d 2d       	mov	r25, r13
+ 314:	60 e0       	ldi	r22, 0x00	; 0
+ 316:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x95); // CRC
+ 31a:	8c 2d       	mov	r24, r12
+ 31c:	9d 2d       	mov	r25, r13
+ 31e:	65 e9       	ldi	r22, 0x95	; 149
+ 320:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.recieveByte(); // grab blank return before the real value is extracted
+ 324:	8c 2d       	mov	r24, r12
+ 326:	9d 2d       	mov	r25, r13
+ 328:	0e 94 d8 02 	call	0x5b0	; 0x5b0 <_ZN3SPI11recieveByteEv>
+		result = spi_obj.recieveByte(); // grab R1 return value
+ 32c:	8c 2d       	mov	r24, r12
+ 32e:	9d 2d       	mov	r25, r13
+ 330:	0e 94 d8 02 	call	0x5b0	; 0x5b0 <_ZN3SPI11recieveByteEv>
+	spi_obj.writeByte(0xFF);
+	spi_obj.writeByte(0xFF);
+	spi_obj.writeByte(0xFF);
+	
+	unsigned char result = 0x00; // variable to store the result for error checking.
+	do
+ 334:	8f 3f       	cpi	r24, 0xFF	; 255
+ 336:	81 f2       	breq	.-96     	; 0x2d8 <_ZN6sdCard4initEv+0xb4>
+		spi_obj.writeByte(0x95); // CRC
+		spi_obj.recieveByte(); // grab blank return before the real value is extracted
+		result = spi_obj.recieveByte(); // grab R1 return value
+	} while (result == 0xFF);
+	
+	if(result == 0x01)
+ 338:	81 30       	cpi	r24, 0x01	; 1
+ 33a:	09 f0       	breq	.+2      	; 0x33e <_ZN6sdCard4initEv+0x11a>
+ 33c:	e9 c0       	rjmp	.+466    	; 0x510 <_ZN6sdCard4initEv+0x2ec>
+	{
+		// CMD8 needs to be moved to SD card class
+		spi_obj.writeByte(0xFF); // Dummy byte to let clock sync
+ 33e:	8b 2d       	mov	r24, r11
+ 340:	9a 2d       	mov	r25, r10
+ 342:	6f ef       	ldi	r22, 0xFF	; 255
+ 344:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x48); // CMD
+ 348:	8b 2d       	mov	r24, r11
+ 34a:	9a 2d       	mov	r25, r10
+ 34c:	68 e4       	ldi	r22, 0x48	; 72
+ 34e:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x00); // argument data 4 bytes
+ 352:	8b 2d       	mov	r24, r11
+ 354:	9a 2d       	mov	r25, r10
+ 356:	60 e0       	ldi	r22, 0x00	; 0
+ 358:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x00);
+ 35c:	8b 2d       	mov	r24, r11
+ 35e:	9a 2d       	mov	r25, r10
+ 360:	60 e0       	ldi	r22, 0x00	; 0
+ 362:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x01);
+ 366:	8b 2d       	mov	r24, r11
+ 368:	9a 2d       	mov	r25, r10
+ 36a:	61 e0       	ldi	r22, 0x01	; 1
+ 36c:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0xAA);
+ 370:	8b 2d       	mov	r24, r11
+ 372:	9a 2d       	mov	r25, r10
+ 374:	6a ea       	ldi	r22, 0xAA	; 170
+ 376:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x87); // CRC
+ 37a:	8b 2d       	mov	r24, r11
+ 37c:	9a 2d       	mov	r25, r10
+ 37e:	67 e8       	ldi	r22, 0x87	; 135
+ 380:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+	else
+	{
+		return false;
+	}
+	unsigned char cmd8result[5];
+	spi_obj.recieveByte(); // grab useless data from pause before the real response.
+ 384:	8b 2d       	mov	r24, r11
+ 386:	9a 2d       	mov	r25, r10
+ 388:	0e 94 d8 02 	call	0x5b0	; 0x5b0 <_ZN3SPI11recieveByteEv>
+ 38c:	8e 01       	movw	r16, r28
+ 38e:	0f 5f       	subi	r16, 0xFF	; 255
+ 390:	1f 4f       	sbci	r17, 0xFF	; 255
+void sdCard::writeByte( unsigned char bla)
+{
+	spi_obj.writeByte(bla);
+}
+
+bool sdCard::init()
+ 392:	0f 2e       	mov	r0, r31
+ 394:	f6 e0       	ldi	r31, 0x06	; 6
+ 396:	ef 2e       	mov	r14, r31
+ 398:	ff 24       	eor	r15, r15
+ 39a:	f0 2d       	mov	r31, r0
+ 39c:	ec 0e       	add	r14, r28
+ 39e:	fd 1e       	adc	r15, r29
+	}
+	unsigned char cmd8result[5];
+	spi_obj.recieveByte(); // grab useless data from pause before the real response.
+	for(int i = 0; i < 5; i++)
+	{
+		cmd8result[i] = spi_obj.recieveByte(); // fill in the response array
+ 3a0:	8c 2d       	mov	r24, r12
+ 3a2:	9d 2d       	mov	r25, r13
+ 3a4:	0e 94 d8 02 	call	0x5b0	; 0x5b0 <_ZN3SPI11recieveByteEv>
+ 3a8:	f8 01       	movw	r30, r16
+ 3aa:	81 93       	st	Z+, r24
+ 3ac:	8f 01       	movw	r16, r30
+	{
+		return false;
+	}
+	unsigned char cmd8result[5];
+	spi_obj.recieveByte(); // grab useless data from pause before the real response.
+	for(int i = 0; i < 5; i++)
+ 3ae:	ee 15       	cp	r30, r14
+ 3b0:	ff 05       	cpc	r31, r15
+ 3b2:	b1 f7       	brne	.-20     	; 0x3a0 <_ZN6sdCard4initEv+0x17c>
+	{
+		cmd8result[i] = spi_obj.recieveByte(); // fill in the response array
+	}
+
+	if( cmd8result[0] == 0x01 && cmd8result[1] == 0x00 && cmd8result[2] == 0x00 && cmd8result[3] == 0x01 && cmd8result[4] == 0xAA ) // validate that it's a HC card
+ 3b4:	89 81       	ldd	r24, Y+1	; 0x01
+ 3b6:	81 30       	cpi	r24, 0x01	; 1
+ 3b8:	09 f0       	breq	.+2      	; 0x3bc <_ZN6sdCard4initEv+0x198>
+ 3ba:	ac c0       	rjmp	.+344    	; 0x514 <_ZN6sdCard4initEv+0x2f0>
+ 3bc:	8a 81       	ldd	r24, Y+2	; 0x02
+ 3be:	88 23       	and	r24, r24
+ 3c0:	09 f0       	breq	.+2      	; 0x3c4 <_ZN6sdCard4initEv+0x1a0>
+ 3c2:	aa c0       	rjmp	.+340    	; 0x518 <_ZN6sdCard4initEv+0x2f4>
+ 3c4:	8b 81       	ldd	r24, Y+3	; 0x03
+ 3c6:	88 23       	and	r24, r24
+ 3c8:	09 f0       	breq	.+2      	; 0x3cc <_ZN6sdCard4initEv+0x1a8>
+ 3ca:	a8 c0       	rjmp	.+336    	; 0x51c <_ZN6sdCard4initEv+0x2f8>
+ 3cc:	8c 81       	ldd	r24, Y+4	; 0x04
+ 3ce:	81 30       	cpi	r24, 0x01	; 1
+ 3d0:	09 f0       	breq	.+2      	; 0x3d4 <_ZN6sdCard4initEv+0x1b0>
+ 3d2:	a6 c0       	rjmp	.+332    	; 0x520 <_ZN6sdCard4initEv+0x2fc>
+ 3d4:	8d 81       	ldd	r24, Y+5	; 0x05
+ 3d6:	8a 3a       	cpi	r24, 0xAA	; 170
+ 3d8:	09 f0       	breq	.+2      	; 0x3dc <_ZN6sdCard4initEv+0x1b8>
+ 3da:	a4 c0       	rjmp	.+328    	; 0x524 <_ZN6sdCard4initEv+0x300>
+		// if cmd8 successfull start initiating the card
+		do // loop fra ACMD41 untill card goes busy.
+		{ 
+		// CMD55 part of ACMD41
+		
+		spi_obj.writeByte(0xFF); // sync byte
+ 3dc:	8c 2d       	mov	r24, r12
+ 3de:	9d 2d       	mov	r25, r13
+ 3e0:	6f ef       	ldi	r22, 0xFF	; 255
+ 3e2:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x77); // CMD 55
+ 3e6:	8c 2d       	mov	r24, r12
+ 3e8:	9d 2d       	mov	r25, r13
+ 3ea:	67 e7       	ldi	r22, 0x77	; 119
+ 3ec:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x00);
+ 3f0:	8c 2d       	mov	r24, r12
+ 3f2:	9d 2d       	mov	r25, r13
+ 3f4:	60 e0       	ldi	r22, 0x00	; 0
+ 3f6:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x00);
+ 3fa:	8c 2d       	mov	r24, r12
+ 3fc:	9d 2d       	mov	r25, r13
+ 3fe:	60 e0       	ldi	r22, 0x00	; 0
+ 400:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x00);
+ 404:	8c 2d       	mov	r24, r12
+ 406:	9d 2d       	mov	r25, r13
+ 408:	60 e0       	ldi	r22, 0x00	; 0
+ 40a:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x00);
+ 40e:	8c 2d       	mov	r24, r12
+ 410:	9d 2d       	mov	r25, r13
+ 412:	60 e0       	ldi	r22, 0x00	; 0
+ 414:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0xFF); // dummy CRC since CRC should be off now;
+ 418:	8c 2d       	mov	r24, r12
+ 41a:	9d 2d       	mov	r25, r13
+ 41c:	6f ef       	ldi	r22, 0xFF	; 255
+ 41e:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.recieveByte();
+ 422:	8c 2d       	mov	r24, r12
+ 424:	9d 2d       	mov	r25, r13
+ 426:	0e 94 d8 02 	call	0x5b0	; 0x5b0 <_ZN3SPI11recieveByteEv>
+		
+		result = spi_obj.recieveByte();
+ 42a:	8c 2d       	mov	r24, r12
+ 42c:	9d 2d       	mov	r25, r13
+ 42e:	0e 94 d8 02 	call	0x5b0	; 0x5b0 <_ZN3SPI11recieveByteEv>
+	
+		//rest of ACMD41
+		spi_obj.writeByte(0xFF);
+ 432:	8c 2d       	mov	r24, r12
+ 434:	9d 2d       	mov	r25, r13
+ 436:	6f ef       	ldi	r22, 0xFF	; 255
+ 438:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x69); // acmd41
+ 43c:	8c 2d       	mov	r24, r12
+ 43e:	9d 2d       	mov	r25, r13
+ 440:	69 e6       	ldi	r22, 0x69	; 105
+ 442:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x40); // HCS bit set high.
+ 446:	8c 2d       	mov	r24, r12
+ 448:	9d 2d       	mov	r25, r13
+ 44a:	60 e4       	ldi	r22, 0x40	; 64
+ 44c:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x00);
+ 450:	8c 2d       	mov	r24, r12
+ 452:	9d 2d       	mov	r25, r13
+ 454:	60 e0       	ldi	r22, 0x00	; 0
+ 456:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x00);
+ 45a:	8c 2d       	mov	r24, r12
+ 45c:	9d 2d       	mov	r25, r13
+ 45e:	60 e0       	ldi	r22, 0x00	; 0
+ 460:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x00);
+ 464:	8c 2d       	mov	r24, r12
+ 466:	9d 2d       	mov	r25, r13
+ 468:	60 e0       	ldi	r22, 0x00	; 0
+ 46a:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0xFF); // dummy CRC
+ 46e:	8c 2d       	mov	r24, r12
+ 470:	9d 2d       	mov	r25, r13
+ 472:	6f ef       	ldi	r22, 0xFF	; 255
+ 474:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.recieveByte();
+ 478:	8c 2d       	mov	r24, r12
+ 47a:	9d 2d       	mov	r25, r13
+ 47c:	0e 94 d8 02 	call	0x5b0	; 0x5b0 <_ZN3SPI11recieveByteEv>
+		result = spi_obj.recieveByte();
+ 480:	8c 2d       	mov	r24, r12
+ 482:	9d 2d       	mov	r25, r13
+ 484:	0e 94 d8 02 	call	0x5b0	; 0x5b0 <_ZN3SPI11recieveByteEv>
+	}
+
+	if( cmd8result[0] == 0x01 && cmd8result[1] == 0x00 && cmd8result[2] == 0x00 && cmd8result[3] == 0x01 && cmd8result[4] == 0xAA ) // validate that it's a HC card
+	{
+		// if cmd8 successfull start initiating the card
+		do // loop fra ACMD41 untill card goes busy.
+ 488:	88 23       	and	r24, r24
+ 48a:	09 f0       	breq	.+2      	; 0x48e <_ZN6sdCard4initEv+0x26a>
+ 48c:	a7 cf       	rjmp	.-178    	; 0x3dc <_ZN6sdCard4initEv+0x1b8>
+		
+		//SendChar(result);
+		} while(result != 0x00); // loop untill card goes busy, indicating the cmd was accepted.
+	
+		// sending command 58 to request OCR register
+		spi_obj.writeByte(0xFF);
+ 48e:	8b 2d       	mov	r24, r11
+ 490:	9a 2d       	mov	r25, r10
+ 492:	6f ef       	ldi	r22, 0xFF	; 255
+ 494:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x7A); // cmd 58
+ 498:	8b 2d       	mov	r24, r11
+ 49a:	9a 2d       	mov	r25, r10
+ 49c:	6a e7       	ldi	r22, 0x7A	; 122
+ 49e:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x00);
+ 4a2:	8b 2d       	mov	r24, r11
+ 4a4:	9a 2d       	mov	r25, r10
+ 4a6:	60 e0       	ldi	r22, 0x00	; 0
+ 4a8:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x00);
+ 4ac:	8b 2d       	mov	r24, r11
+ 4ae:	9a 2d       	mov	r25, r10
+ 4b0:	60 e0       	ldi	r22, 0x00	; 0
+ 4b2:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x00);
+ 4b6:	8b 2d       	mov	r24, r11
+ 4b8:	9a 2d       	mov	r25, r10
+ 4ba:	60 e0       	ldi	r22, 0x00	; 0
+ 4bc:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0x00);
+ 4c0:	8b 2d       	mov	r24, r11
+ 4c2:	9a 2d       	mov	r25, r10
+ 4c4:	60 e0       	ldi	r22, 0x00	; 0
+ 4c6:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+		spi_obj.writeByte(0xFF); // dummy CRC;
+ 4ca:	8b 2d       	mov	r24, r11
+ 4cc:	9a 2d       	mov	r25, r10
+ 4ce:	6f ef       	ldi	r22, 0xFF	; 255
+ 4d0:	0e 94 d2 02 	call	0x5a4	; 0x5a4 <_ZN3SPI9writeByteEh>
+	
+		//unsigned char R1; // u
+		unsigned char OCR[4];
+	
+		spi_obj.recieveByte();
+ 4d4:	8b 2d       	mov	r24, r11
+ 4d6:	9a 2d       	mov	r25, r10
+ 4d8:	0e 94 d8 02 	call	0x5b0	; 0x5b0 <_ZN3SPI11recieveByteEv>
+		spi_obj.recieveByte();
+ 4dc:	8b 2d       	mov	r24, r11
+ 4de:	9a 2d       	mov	r25, r10
+ 4e0:	0e 94 d8 02 	call	0x5b0	; 0x5b0 <_ZN3SPI11recieveByteEv>
+		OCR[0] = spi_obj.recieveByte();
+ 4e4:	8b 2d       	mov	r24, r11
+ 4e6:	9a 2d       	mov	r25, r10
+ 4e8:	0e 94 d8 02 	call	0x5b0	; 0x5b0 <_ZN3SPI11recieveByteEv>
+ 4ec:	08 2f       	mov	r16, r24
+		OCR[1] = spi_obj.recieveByte();
+ 4ee:	8b 2d       	mov	r24, r11
+ 4f0:	9a 2d       	mov	r25, r10
+ 4f2:	0e 94 d8 02 	call	0x5b0	; 0x5b0 <_ZN3SPI11recieveByteEv>
+		OCR[2] = spi_obj.recieveByte();
+ 4f6:	8b 2d       	mov	r24, r11
+ 4f8:	9a 2d       	mov	r25, r10
+ 4fa:	0e 94 d8 02 	call	0x5b0	; 0x5b0 <_ZN3SPI11recieveByteEv>
+		OCR[3] = spi_obj.recieveByte();
+ 4fe:	8b 2d       	mov	r24, r11
+ 500:	9a 2d       	mov	r25, r10
+ 502:	0e 94 d8 02 	call	0x5b0	; 0x5b0 <_ZN3SPI11recieveByteEv>
+void sdCard::writeByte( unsigned char bla)
+{
+	spi_obj.writeByte(bla);
+}
+
+bool sdCard::init()
+ 506:	81 e0       	ldi	r24, 0x01	; 1
+ 508:	06 fd       	sbrc	r16, 6
+ 50a:	0d c0       	rjmp	.+26     	; 0x526 <_ZN6sdCard4initEv+0x302>
+ 50c:	80 e0       	ldi	r24, 0x00	; 0
+ 50e:	0b c0       	rjmp	.+22     	; 0x526 <_ZN6sdCard4initEv+0x302>
+		spi_obj.writeByte(0x87); // CRC
+		//0x48 00 00 01 AA 87
+	}
+	else
+	{
+		return false;
+ 510:	80 e0       	ldi	r24, 0x00	; 0
+ 512:	09 c0       	rjmp	.+18     	; 0x526 <_ZN6sdCard4initEv+0x302>
+			return false;
+		}	
+	} 
+	else 
+	{
+		return false;
+ 514:	80 e0       	ldi	r24, 0x00	; 0
+ 516:	07 c0       	rjmp	.+14     	; 0x526 <_ZN6sdCard4initEv+0x302>
+ 518:	80 e0       	ldi	r24, 0x00	; 0
+ 51a:	05 c0       	rjmp	.+10     	; 0x526 <_ZN6sdCard4initEv+0x302>
+ 51c:	80 e0       	ldi	r24, 0x00	; 0
+ 51e:	03 c0       	rjmp	.+6      	; 0x526 <_ZN6sdCard4initEv+0x302>
+ 520:	80 e0       	ldi	r24, 0x00	; 0
+ 522:	01 c0       	rjmp	.+2      	; 0x526 <_ZN6sdCard4initEv+0x302>
+ 524:	80 e0       	ldi	r24, 0x00	; 0
+	}		
+			
+	
+}
+ 526:	0f 90       	pop	r0
+ 528:	0f 90       	pop	r0
+ 52a:	0f 90       	pop	r0
+ 52c:	0f 90       	pop	r0
+ 52e:	0f 90       	pop	r0
+ 530:	df 91       	pop	r29
+ 532:	cf 91       	pop	r28
+ 534:	1f 91       	pop	r17
+ 536:	0f 91       	pop	r16
+ 538:	ff 90       	pop	r15
+ 53a:	ef 90       	pop	r14
+ 53c:	df 90       	pop	r13
+ 53e:	cf 90       	pop	r12
+ 540:	bf 90       	pop	r11
+ 542:	af 90       	pop	r10
+ 544:	08 95       	ret
+
+00000546 <_ZN3SPI7setFreqEi>:
 // as a parameter, 4000, 1000, 250, 125 are available options,
 // defaults to 4000 if invalid parameter.
 //=============================================================
 void SPI::setFreq( int freq ) // sets prescaler based on requested freq in kHz, calculations assume a 16MHz clock speed.
 {
 	switch(freq)
- 4d2:	6a 3f       	cpi	r22, 0xFA	; 250
- 4d4:	71 05       	cpc	r23, r1
- 4d6:	c1 f0       	breq	.+48     	; 0x508 <_ZN3SPI7setFreqEi+0x36>
- 4d8:	6b 3f       	cpi	r22, 0xFB	; 251
- 4da:	71 05       	cpc	r23, r1
- 4dc:	24 f4       	brge	.+8      	; 0x4e6 <_ZN3SPI7setFreqEi+0x14>
- 4de:	6d 37       	cpi	r22, 0x7D	; 125
- 4e0:	71 05       	cpc	r23, r1
- 4e2:	d9 f4       	brne	.+54     	; 0x51a <_ZN3SPI7setFreqEi+0x48>
- 4e4:	16 c0       	rjmp	.+44     	; 0x512 <_ZN3SPI7setFreqEi+0x40>
- 4e6:	83 e0       	ldi	r24, 0x03	; 3
- 4e8:	68 3e       	cpi	r22, 0xE8	; 232
- 4ea:	78 07       	cpc	r23, r24
- 4ec:	41 f0       	breq	.+16     	; 0x4fe <_ZN3SPI7setFreqEi+0x2c>
- 4ee:	8f e0       	ldi	r24, 0x0F	; 15
- 4f0:	60 3a       	cpi	r22, 0xA0	; 160
- 4f2:	78 07       	cpc	r23, r24
- 4f4:	91 f4       	brne	.+36     	; 0x51a <_ZN3SPI7setFreqEi+0x48>
+ 546:	6a 3f       	cpi	r22, 0xFA	; 250
+ 548:	71 05       	cpc	r23, r1
+ 54a:	c1 f0       	breq	.+48     	; 0x57c <_ZN3SPI7setFreqEi+0x36>
+ 54c:	6b 3f       	cpi	r22, 0xFB	; 251
+ 54e:	71 05       	cpc	r23, r1
+ 550:	24 f4       	brge	.+8      	; 0x55a <_ZN3SPI7setFreqEi+0x14>
+ 552:	6d 37       	cpi	r22, 0x7D	; 125
+ 554:	71 05       	cpc	r23, r1
+ 556:	d9 f4       	brne	.+54     	; 0x58e <_ZN3SPI7setFreqEi+0x48>
+ 558:	16 c0       	rjmp	.+44     	; 0x586 <_ZN3SPI7setFreqEi+0x40>
+ 55a:	83 e0       	ldi	r24, 0x03	; 3
+ 55c:	68 3e       	cpi	r22, 0xE8	; 232
+ 55e:	78 07       	cpc	r23, r24
+ 560:	41 f0       	breq	.+16     	; 0x572 <_ZN3SPI7setFreqEi+0x2c>
+ 562:	8f e0       	ldi	r24, 0x0F	; 15
+ 564:	60 3a       	cpi	r22, 0xA0	; 160
+ 566:	78 07       	cpc	r23, r24
+ 568:	91 f4       	brne	.+36     	; 0x58e <_ZN3SPI7setFreqEi+0x48>
 	{
 	case 4000:
 		SPCR = SPCR & 0b11111100; // prescaler = 4
- 4f6:	8c b5       	in	r24, 0x2c	; 44
- 4f8:	8c 7f       	andi	r24, 0xFC	; 252
- 4fa:	8c bd       	out	0x2c, r24	; 44
+ 56a:	8c b5       	in	r24, 0x2c	; 44
+ 56c:	8c 7f       	andi	r24, 0xFC	; 252
+ 56e:	8c bd       	out	0x2c, r24	; 44
 		break;
- 4fc:	08 95       	ret
+ 570:	08 95       	ret
 	case 1000:
 		SPCR = (SPCR & 0b11111100) | 0b00000001; // prescaler = 16
- 4fe:	8c b5       	in	r24, 0x2c	; 44
- 500:	8c 7f       	andi	r24, 0xFC	; 252
- 502:	81 60       	ori	r24, 0x01	; 1
- 504:	8c bd       	out	0x2c, r24	; 44
+ 572:	8c b5       	in	r24, 0x2c	; 44
+ 574:	8c 7f       	andi	r24, 0xFC	; 252
+ 576:	81 60       	ori	r24, 0x01	; 1
+ 578:	8c bd       	out	0x2c, r24	; 44
 		break;
- 506:	08 95       	ret
+ 57a:	08 95       	ret
 	case 250:
 		SPCR = (SPCR & 0b11111100) | 0b00000010; // prescaler = 64
- 508:	8c b5       	in	r24, 0x2c	; 44
- 50a:	8c 7f       	andi	r24, 0xFC	; 252
- 50c:	82 60       	ori	r24, 0x02	; 2
- 50e:	8c bd       	out	0x2c, r24	; 44
+ 57c:	8c b5       	in	r24, 0x2c	; 44
+ 57e:	8c 7f       	andi	r24, 0xFC	; 252
+ 580:	82 60       	ori	r24, 0x02	; 2
+ 582:	8c bd       	out	0x2c, r24	; 44
 		break;
- 510:	08 95       	ret
+ 584:	08 95       	ret
 	case 125:
 		SPCR = SPCR | 0b00000011; // prescaler = 128
- 512:	8c b5       	in	r24, 0x2c	; 44
- 514:	83 60       	ori	r24, 0x03	; 3
- 516:	8c bd       	out	0x2c, r24	; 44
+ 586:	8c b5       	in	r24, 0x2c	; 44
+ 588:	83 60       	ori	r24, 0x03	; 3
+ 58a:	8c bd       	out	0x2c, r24	; 44
 		break;
- 518:	08 95       	ret
+ 58c:	08 95       	ret
 	default:
 		SPCR = SPCR & 0b11111100; // defaults to 4000 kHz
- 51a:	8c b5       	in	r24, 0x2c	; 44
- 51c:	8c 7f       	andi	r24, 0xFC	; 252
- 51e:	8c bd       	out	0x2c, r24	; 44
- 520:	08 95       	ret
+ 58e:	8c b5       	in	r24, 0x2c	; 44
+ 590:	8c 7f       	andi	r24, 0xFC	; 252
+ 592:	8c bd       	out	0x2c, r24	; 44
+ 594:	08 95       	ret
 
-00000522 <_ZN3SPIC1Ei>:
+00000596 <_ZN3SPIC1Ei>:
 // to freq.
 //=============================================================
  SPI::SPI( int freq )
 {
 	// only using master mode in the project so slave mode is not part of this SPI driver.
 	DDRB = 0b00000111; // sets MOSI as output and SCK as output rest as input on port B.
- 522:	27 e0       	ldi	r18, 0x07	; 7
- 524:	24 b9       	out	0x04, r18	; 4
+ 596:	27 e0       	ldi	r18, 0x07	; 7
+ 598:	24 b9       	out	0x04, r18	; 4
 	SPCR = 0b01010000; // enable SPI and set mode to master
- 526:	20 e5       	ldi	r18, 0x50	; 80
- 528:	2c bd       	out	0x2c, r18	; 44
+ 59a:	20 e5       	ldi	r18, 0x50	; 80
+ 59c:	2c bd       	out	0x2c, r18	; 44
 	setFreq(freq);
- 52a:	0e 94 69 02 	call	0x4d2	; 0x4d2 <_ZN3SPI7setFreqEi>
+ 59e:	0e 94 a3 02 	call	0x546	; 0x546 <_ZN3SPI7setFreqEi>
 }
- 52e:	08 95       	ret
+ 5a2:	08 95       	ret
 
-00000530 <_ZN3SPI9writeByteEh>:
+000005a4 <_ZN3SPI9writeByteEh>:
 // DESCR. : sends 1 byte of data out on MOSI,
 // returns the response recieved from the reciever
 //=============================================================
 unsigned char SPI::writeByte( unsigned char data )
 {
 	SPDR = data; // starting the transmission
- 530:	6e bd       	out	0x2e, r22	; 46
+ 5a4:	6e bd       	out	0x2e, r22	; 46
 	while(!(SPSR &(1<<SPIF)));
- 532:	0d b4       	in	r0, 0x2d	; 45
- 534:	07 fe       	sbrs	r0, 7
- 536:	fd cf       	rjmp	.-6      	; 0x532 <_ZN3SPI9writeByteEh+0x2>
+ 5a6:	0d b4       	in	r0, 0x2d	; 45
+ 5a8:	07 fe       	sbrs	r0, 7
+ 5aa:	fd cf       	rjmp	.-6      	; 0x5a6 <_ZN3SPI9writeByteEh+0x2>
 	return SPDR;	
- 538:	8e b5       	in	r24, 0x2e	; 46
+ 5ac:	8e b5       	in	r24, 0x2e	; 46
 }
- 53a:	08 95       	ret
+ 5ae:	08 95       	ret
 
-0000053c <_ZN3SPI11recieveByteEv>:
+000005b0 <_ZN3SPI11recieveByteEv>:
 // DESCR. : Recieves 1 byte of data, has to send out dummy data to MOSI to recieve.
 // returns the response recieved from the reciever
 //=============================================================
 unsigned char SPI::recieveByte()
 {
 	SPDR = 0xFF; // sends don't care byte to transmit clocks.
- 53c:	8f ef       	ldi	r24, 0xFF	; 255
- 53e:	8e bd       	out	0x2e, r24	; 46
+ 5b0:	8f ef       	ldi	r24, 0xFF	; 255
+ 5b2:	8e bd       	out	0x2e, r24	; 46
 	while(!(SPSR &(1<<SPIF)));
- 540:	0d b4       	in	r0, 0x2d	; 45
- 542:	07 fe       	sbrs	r0, 7
- 544:	fd cf       	rjmp	.-6      	; 0x540 <_ZN3SPI11recieveByteEv+0x4>
+ 5b4:	0d b4       	in	r0, 0x2d	; 45
+ 5b6:	07 fe       	sbrs	r0, 7
+ 5b8:	fd cf       	rjmp	.-6      	; 0x5b4 <_ZN3SPI11recieveByteEv+0x4>
 	return SPDR; // read data and return it.
- 546:	8e b5       	in	r24, 0x2e	; 46
+ 5ba:	8e b5       	in	r24, 0x2e	; 46
 }
- 548:	08 95       	ret
+ 5bc:	08 95       	ret
 
-0000054a <_Z8InitUARTmhc>:
+000005be <_Z8InitUARTmhc>:
 Parameters:
 	BaudRate: Wanted Baud Rate.
 	Databits: Wanted number of Data Bits.
 *************************************************************************/
 void InitUART(unsigned long BaudRate, unsigned char DataBit, char Parity)
 {
- 54a:	0f 93       	push	r16
- 54c:	1f 93       	push	r17
- 54e:	dc 01       	movw	r26, r24
- 550:	cb 01       	movw	r24, r22
- 552:	52 2f       	mov	r21, r18
+ 5be:	0f 93       	push	r16
+ 5c0:	1f 93       	push	r17
+ 5c2:	dc 01       	movw	r26, r24
+ 5c4:	cb 01       	movw	r24, r22
+ 5c6:	52 2f       	mov	r21, r18
 unsigned int TempUBRR;
 
   if ((BaudRate >= 110) && (BaudRate <= 115200) && (DataBit >=5) && (DataBit <= 8))
- 554:	8c 01       	movw	r16, r24
- 556:	9d 01       	movw	r18, r26
- 558:	0e 56       	subi	r16, 0x6E	; 110
- 55a:	10 40       	sbci	r17, 0x00	; 0
- 55c:	20 40       	sbci	r18, 0x00	; 0
- 55e:	30 40       	sbci	r19, 0x00	; 0
- 560:	03 39       	cpi	r16, 0x93	; 147
- 562:	61 ec       	ldi	r22, 0xC1	; 193
- 564:	16 07       	cpc	r17, r22
- 566:	61 e0       	ldi	r22, 0x01	; 1
- 568:	26 07       	cpc	r18, r22
- 56a:	60 e0       	ldi	r22, 0x00	; 0
- 56c:	36 07       	cpc	r19, r22
- 56e:	d8 f5       	brcc	.+118    	; 0x5e6 <_Z8InitUARTmhc+0x9c>
- 570:	45 30       	cpi	r20, 0x05	; 5
- 572:	c8 f1       	brcs	.+114    	; 0x5e6 <_Z8InitUARTmhc+0x9c>
- 574:	49 30       	cpi	r20, 0x09	; 9
- 576:	b8 f5       	brcc	.+110    	; 0x5e6 <_Z8InitUARTmhc+0x9c>
+ 5c8:	8c 01       	movw	r16, r24
+ 5ca:	9d 01       	movw	r18, r26
+ 5cc:	0e 56       	subi	r16, 0x6E	; 110
+ 5ce:	10 40       	sbci	r17, 0x00	; 0
+ 5d0:	20 40       	sbci	r18, 0x00	; 0
+ 5d2:	30 40       	sbci	r19, 0x00	; 0
+ 5d4:	03 39       	cpi	r16, 0x93	; 147
+ 5d6:	61 ec       	ldi	r22, 0xC1	; 193
+ 5d8:	16 07       	cpc	r17, r22
+ 5da:	61 e0       	ldi	r22, 0x01	; 1
+ 5dc:	26 07       	cpc	r18, r22
+ 5de:	60 e0       	ldi	r22, 0x00	; 0
+ 5e0:	36 07       	cpc	r19, r22
+ 5e2:	d8 f5       	brcc	.+118    	; 0x65a <_Z8InitUARTmhc+0x9c>
+ 5e4:	45 30       	cpi	r20, 0x05	; 5
+ 5e6:	c8 f1       	brcs	.+114    	; 0x65a <_Z8InitUARTmhc+0x9c>
+ 5e8:	49 30       	cpi	r20, 0x09	; 9
+ 5ea:	b8 f5       	brcc	.+110    	; 0x65a <_Z8InitUARTmhc+0x9c>
   { 
     // "Normal" clock, no multiprocessor mode (= default)
     UCSR0A = 0b00100000;
- 578:	20 e2       	ldi	r18, 0x20	; 32
- 57a:	20 93 c0 00 	sts	0x00C0, r18
+ 5ec:	20 e2       	ldi	r18, 0x20	; 32
+ 5ee:	20 93 c0 00 	sts	0x00C0, r18
     // No interrupts enabled
     // Receiver enabled
     // Transmitter enabled
     // No 9 bit operation
     UCSR0B = 0b00011000;	
- 57e:	28 e1       	ldi	r18, 0x18	; 24
- 580:	20 93 c1 00 	sts	0x00C1, r18
+ 5f2:	28 e1       	ldi	r18, 0x18	; 24
+ 5f4:	20 93 c1 00 	sts	0x00C1, r18
     // Asynchronous operation, 1 stop bit
     // Bit 2 and bit 1 controls the number of data bits
     UCSR0C = (DataBit-5)<<1;
- 584:	45 50       	subi	r20, 0x05	; 5
- 586:	44 0f       	add	r20, r20
- 588:	40 93 c2 00 	sts	0x00C2, r20
+ 5f8:	45 50       	subi	r20, 0x05	; 5
+ 5fa:	44 0f       	add	r20, r20
+ 5fc:	40 93 c2 00 	sts	0x00C2, r20
 	// Set parity bits (if parity used)
 	if (Parity == 'E')
- 58c:	55 34       	cpi	r21, 0x45	; 69
- 58e:	31 f4       	brne	.+12     	; 0x59c <_Z8InitUARTmhc+0x52>
+ 600:	55 34       	cpi	r21, 0x45	; 69
+ 602:	31 f4       	brne	.+12     	; 0x610 <_Z8InitUARTmhc+0x52>
       UCSR0C |= 0b00100000;
- 590:	e2 ec       	ldi	r30, 0xC2	; 194
- 592:	f0 e0       	ldi	r31, 0x00	; 0
- 594:	20 81       	ld	r18, Z
- 596:	20 62       	ori	r18, 0x20	; 32
- 598:	20 83       	st	Z, r18
- 59a:	07 c0       	rjmp	.+14     	; 0x5aa <_Z8InitUARTmhc+0x60>
+ 604:	e2 ec       	ldi	r30, 0xC2	; 194
+ 606:	f0 e0       	ldi	r31, 0x00	; 0
+ 608:	20 81       	ld	r18, Z
+ 60a:	20 62       	ori	r18, 0x20	; 32
+ 60c:	20 83       	st	Z, r18
+ 60e:	07 c0       	rjmp	.+14     	; 0x61e <_Z8InitUARTmhc+0x60>
     else if (Parity == 'O')	  
- 59c:	5f 34       	cpi	r21, 0x4F	; 79
- 59e:	29 f4       	brne	.+10     	; 0x5aa <_Z8InitUARTmhc+0x60>
+ 610:	5f 34       	cpi	r21, 0x4F	; 79
+ 612:	29 f4       	brne	.+10     	; 0x61e <_Z8InitUARTmhc+0x60>
       UCSR0C |= 0b00110000;	
- 5a0:	e2 ec       	ldi	r30, 0xC2	; 194
- 5a2:	f0 e0       	ldi	r31, 0x00	; 0
- 5a4:	20 81       	ld	r18, Z
- 5a6:	20 63       	ori	r18, 0x30	; 48
- 5a8:	20 83       	st	Z, r18
+ 614:	e2 ec       	ldi	r30, 0xC2	; 194
+ 616:	f0 e0       	ldi	r31, 0x00	; 0
+ 618:	20 81       	ld	r18, Z
+ 61a:	20 63       	ori	r18, 0x30	; 48
+ 61c:	20 83       	st	Z, r18
     // Set Baud Rate according to the parameter BaudRate:
     // Select Baud Rate (first store "UBRRH--UBRRL" in local 16-bit variable,
     //                   then write the two 8-bit registers separately):
     TempUBRR = XTAL/(16*BaudRate) - 1;
- 5aa:	88 0f       	add	r24, r24
- 5ac:	99 1f       	adc	r25, r25
- 5ae:	aa 1f       	adc	r26, r26
- 5b0:	bb 1f       	adc	r27, r27
- 5b2:	88 0f       	add	r24, r24
- 5b4:	99 1f       	adc	r25, r25
- 5b6:	aa 1f       	adc	r26, r26
- 5b8:	bb 1f       	adc	r27, r27
- 5ba:	9c 01       	movw	r18, r24
- 5bc:	ad 01       	movw	r20, r26
- 5be:	22 0f       	add	r18, r18
- 5c0:	33 1f       	adc	r19, r19
- 5c2:	44 1f       	adc	r20, r20
- 5c4:	55 1f       	adc	r21, r21
- 5c6:	22 0f       	add	r18, r18
- 5c8:	33 1f       	adc	r19, r19
- 5ca:	44 1f       	adc	r20, r20
- 5cc:	55 1f       	adc	r21, r21
- 5ce:	60 e0       	ldi	r22, 0x00	; 0
- 5d0:	74 e2       	ldi	r23, 0x24	; 36
- 5d2:	84 ef       	ldi	r24, 0xF4	; 244
- 5d4:	90 e0       	ldi	r25, 0x00	; 0
- 5d6:	0e 94 37 03 	call	0x66e	; 0x66e <__udivmodsi4>
- 5da:	21 50       	subi	r18, 0x01	; 1
- 5dc:	30 40       	sbci	r19, 0x00	; 0
+ 61e:	88 0f       	add	r24, r24
+ 620:	99 1f       	adc	r25, r25
+ 622:	aa 1f       	adc	r26, r26
+ 624:	bb 1f       	adc	r27, r27
+ 626:	88 0f       	add	r24, r24
+ 628:	99 1f       	adc	r25, r25
+ 62a:	aa 1f       	adc	r26, r26
+ 62c:	bb 1f       	adc	r27, r27
+ 62e:	9c 01       	movw	r18, r24
+ 630:	ad 01       	movw	r20, r26
+ 632:	22 0f       	add	r18, r18
+ 634:	33 1f       	adc	r19, r19
+ 636:	44 1f       	adc	r20, r20
+ 638:	55 1f       	adc	r21, r21
+ 63a:	22 0f       	add	r18, r18
+ 63c:	33 1f       	adc	r19, r19
+ 63e:	44 1f       	adc	r20, r20
+ 640:	55 1f       	adc	r21, r21
+ 642:	60 e0       	ldi	r22, 0x00	; 0
+ 644:	74 e2       	ldi	r23, 0x24	; 36
+ 646:	84 ef       	ldi	r24, 0xF4	; 244
+ 648:	90 e0       	ldi	r25, 0x00	; 0
+ 64a:	0e 94 71 03 	call	0x6e2	; 0x6e2 <__udivmodsi4>
+ 64e:	21 50       	subi	r18, 0x01	; 1
+ 650:	30 40       	sbci	r19, 0x00	; 0
     // Write lower part of UBRR
     UBRR0L = TempUBRR;
- 5de:	20 93 c4 00 	sts	0x00C4, r18
+ 652:	20 93 c4 00 	sts	0x00C4, r18
     // Write upper part of UBRR
     UBRR0H = TempUBRR >> 8;
- 5e2:	30 93 c5 00 	sts	0x00C5, r19
+ 656:	30 93 c5 00 	sts	0x00C5, r19
   }  
 }
- 5e6:	1f 91       	pop	r17
- 5e8:	0f 91       	pop	r16
- 5ea:	08 95       	ret
+ 65a:	1f 91       	pop	r17
+ 65c:	0f 91       	pop	r16
+ 65e:	08 95       	ret
 
-000005ec <_Z9CharReadyv>:
+00000660 <_Z9CharReadyv>:
   Returns 0 (FALSE), if the UART has NOT received a new character.
   Returns value <> 0 (TRUE), if the UART HAS received a new character.
 *************************************************************************/
 unsigned char CharReady()
 {
    return UCSR0A & (1<<7);
- 5ec:	80 91 c0 00 	lds	r24, 0x00C0
+ 660:	80 91 c0 00 	lds	r24, 0x00C0
 }
- 5f0:	80 78       	andi	r24, 0x80	; 128
- 5f2:	08 95       	ret
+ 664:	80 78       	andi	r24, 0x80	; 128
+ 666:	08 95       	ret
 
-000005f4 <_Z8ReadCharv>:
+00000668 <_Z8ReadCharv>:
 Then this character is returned.
 *************************************************************************/
 char ReadChar()
 {
   // Wait for new character received
   while ( (UCSR0A & (1<<7)) == 0 )
- 5f4:	e0 ec       	ldi	r30, 0xC0	; 192
- 5f6:	f0 e0       	ldi	r31, 0x00	; 0
- 5f8:	80 81       	ld	r24, Z
- 5fa:	88 23       	and	r24, r24
- 5fc:	ec f7       	brge	.-6      	; 0x5f8 <_Z8ReadCharv+0x4>
+ 668:	e0 ec       	ldi	r30, 0xC0	; 192
+ 66a:	f0 e0       	ldi	r31, 0x00	; 0
+ 66c:	80 81       	ld	r24, Z
+ 66e:	88 23       	and	r24, r24
+ 670:	ec f7       	brge	.-6      	; 0x66c <_Z8ReadCharv+0x4>
   {}                        
   // Then return it
   return UDR0;
- 5fe:	80 91 c6 00 	lds	r24, 0x00C6
+ 672:	80 91 c6 00 	lds	r24, 0x00C6
 }
- 602:	08 95       	ret
+ 676:	08 95       	ret
 
-00000604 <_Z8SendCharc>:
+00000678 <_Z8SendCharc>:
 	Tegn : Character for sending. 
 *************************************************************************/
 void SendChar(char Tegn)
 {
   // Wait for transmitter register empty (ready for new character)
   while ( (UCSR0A & (1<<5)) == 0 )
- 604:	e0 ec       	ldi	r30, 0xC0	; 192
- 606:	f0 e0       	ldi	r31, 0x00	; 0
- 608:	90 81       	ld	r25, Z
- 60a:	95 ff       	sbrs	r25, 5
- 60c:	fd cf       	rjmp	.-6      	; 0x608 <_Z8SendCharc+0x4>
+ 678:	e0 ec       	ldi	r30, 0xC0	; 192
+ 67a:	f0 e0       	ldi	r31, 0x00	; 0
+ 67c:	90 81       	ld	r25, Z
+ 67e:	95 ff       	sbrs	r25, 5
+ 680:	fd cf       	rjmp	.-6      	; 0x67c <_Z8SendCharc+0x4>
   {}
   // Then send the character
   UDR0 = Tegn;
- 60e:	80 93 c6 00 	sts	0x00C6, r24
+ 682:	80 93 c6 00 	sts	0x00C6, r24
 }
- 612:	08 95       	ret
+ 686:	08 95       	ret
 
-00000614 <_Z10SendStringPc>:
+00000688 <_Z10SendStringPc>:
 Sends 0 terminated string.
 Parameter:
    Streng: Pointer to the string. 
 *************************************************************************/
 void SendString(char* Streng)
 {
- 614:	cf 93       	push	r28
- 616:	df 93       	push	r29
- 618:	ec 01       	movw	r28, r24
+ 688:	cf 93       	push	r28
+ 68a:	df 93       	push	r29
+ 68c:	ec 01       	movw	r28, r24
   // Repeat until zero-termination
   while (*Streng != 0)
- 61a:	88 81       	ld	r24, Y
- 61c:	88 23       	and	r24, r24
- 61e:	31 f0       	breq	.+12     	; 0x62c <_Z10SendStringPc+0x18>
+ 68e:	88 81       	ld	r24, Y
+ 690:	88 23       	and	r24, r24
+ 692:	31 f0       	breq	.+12     	; 0x6a0 <_Z10SendStringPc+0x18>
 /*************************************************************************
 Sends 0 terminated string.
 Parameter:
    Streng: Pointer to the string. 
 *************************************************************************/
 void SendString(char* Streng)
- 620:	21 96       	adiw	r28, 0x01	; 1
+ 694:	21 96       	adiw	r28, 0x01	; 1
 {
   // Repeat until zero-termination
   while (*Streng != 0)
   {
     // Send the character pointed to by "Streng"
     SendChar(*Streng);
- 622:	0e 94 02 03 	call	0x604	; 0x604 <_Z8SendCharc>
+ 696:	0e 94 3c 03 	call	0x678	; 0x678 <_Z8SendCharc>
    Streng: Pointer to the string. 
 *************************************************************************/
 void SendString(char* Streng)
 {
   // Repeat until zero-termination
   while (*Streng != 0)
- 626:	89 91       	ld	r24, Y+
- 628:	88 23       	and	r24, r24
- 62a:	d9 f7       	brne	.-10     	; 0x622 <_Z10SendStringPc+0xe>
+ 69a:	89 91       	ld	r24, Y+
+ 69c:	88 23       	and	r24, r24
+ 69e:	d9 f7       	brne	.-10     	; 0x696 <_Z10SendStringPc+0xe>
     // Send the character pointed to by "Streng"
     SendChar(*Streng);
     // Advance the pointer one step
     Streng++;
   }
 }
- 62c:	df 91       	pop	r29
- 62e:	cf 91       	pop	r28
- 630:	08 95       	ret
+ 6a0:	df 91       	pop	r29
+ 6a2:	cf 91       	pop	r28
+ 6a4:	08 95       	ret
 
-00000632 <_Z11SendIntegeri>:
+000006a6 <_Z11SendIntegeri>:
 Makes use of the C standard library <stdlib.h>.
 Parameter:
     Tal: The integer to be converted and sent. 
 *************************************************************************/
 void SendInteger(int Tal)
 {
- 632:	cf 93       	push	r28
- 634:	df 93       	push	r29
- 636:	cd b7       	in	r28, 0x3d	; 61
- 638:	de b7       	in	r29, 0x3e	; 62
- 63a:	27 97       	sbiw	r28, 0x07	; 7
- 63c:	0f b6       	in	r0, 0x3f	; 63
- 63e:	f8 94       	cli
- 640:	de bf       	out	0x3e, r29	; 62
- 642:	0f be       	out	0x3f, r0	; 63
- 644:	cd bf       	out	0x3d, r28	; 61
+ 6a6:	cf 93       	push	r28
+ 6a8:	df 93       	push	r29
+ 6aa:	cd b7       	in	r28, 0x3d	; 61
+ 6ac:	de b7       	in	r29, 0x3e	; 62
+ 6ae:	27 97       	sbiw	r28, 0x07	; 7
+ 6b0:	0f b6       	in	r0, 0x3f	; 63
+ 6b2:	f8 94       	cli
+ 6b4:	de bf       	out	0x3e, r29	; 62
+ 6b6:	0f be       	out	0x3f, r0	; 63
+ 6b8:	cd bf       	out	0x3d, r28	; 61
 char array[7];
   // Convert the integer to an ASCII string (array), radix = 10 
   itoa(Tal, array, 10);
- 646:	be 01       	movw	r22, r28
- 648:	6f 5f       	subi	r22, 0xFF	; 255
- 64a:	7f 4f       	sbci	r23, 0xFF	; 255
- 64c:	4a e0       	ldi	r20, 0x0A	; 10
- 64e:	50 e0       	ldi	r21, 0x00	; 0
- 650:	0e 94 59 03 	call	0x6b2	; 0x6b2 <itoa>
+ 6ba:	be 01       	movw	r22, r28
+ 6bc:	6f 5f       	subi	r22, 0xFF	; 255
+ 6be:	7f 4f       	sbci	r23, 0xFF	; 255
+ 6c0:	4a e0       	ldi	r20, 0x0A	; 10
+ 6c2:	50 e0       	ldi	r21, 0x00	; 0
+ 6c4:	0e 94 93 03 	call	0x726	; 0x726 <itoa>
   // - then send the string
   SendString(array);
- 654:	ce 01       	movw	r24, r28
- 656:	01 96       	adiw	r24, 0x01	; 1
- 658:	0e 94 0a 03 	call	0x614	; 0x614 <_Z10SendStringPc>
+ 6c8:	ce 01       	movw	r24, r28
+ 6ca:	01 96       	adiw	r24, 0x01	; 1
+ 6cc:	0e 94 44 03 	call	0x688	; 0x688 <_Z10SendStringPc>
 }
- 65c:	27 96       	adiw	r28, 0x07	; 7
- 65e:	0f b6       	in	r0, 0x3f	; 63
- 660:	f8 94       	cli
- 662:	de bf       	out	0x3e, r29	; 62
- 664:	0f be       	out	0x3f, r0	; 63
- 666:	cd bf       	out	0x3d, r28	; 61
- 668:	df 91       	pop	r29
- 66a:	cf 91       	pop	r28
- 66c:	08 95       	ret
+ 6d0:	27 96       	adiw	r28, 0x07	; 7
+ 6d2:	0f b6       	in	r0, 0x3f	; 63
+ 6d4:	f8 94       	cli
+ 6d6:	de bf       	out	0x3e, r29	; 62
+ 6d8:	0f be       	out	0x3f, r0	; 63
+ 6da:	cd bf       	out	0x3d, r28	; 61
+ 6dc:	df 91       	pop	r29
+ 6de:	cf 91       	pop	r28
+ 6e0:	08 95       	ret
 
-0000066e <__udivmodsi4>:
- 66e:	a1 e2       	ldi	r26, 0x21	; 33
- 670:	1a 2e       	mov	r1, r26
- 672:	aa 1b       	sub	r26, r26
- 674:	bb 1b       	sub	r27, r27
- 676:	fd 01       	movw	r30, r26
- 678:	0d c0       	rjmp	.+26     	; 0x694 <__udivmodsi4_ep>
+000006e2 <__udivmodsi4>:
+ 6e2:	a1 e2       	ldi	r26, 0x21	; 33
+ 6e4:	1a 2e       	mov	r1, r26
+ 6e6:	aa 1b       	sub	r26, r26
+ 6e8:	bb 1b       	sub	r27, r27
+ 6ea:	fd 01       	movw	r30, r26
+ 6ec:	0d c0       	rjmp	.+26     	; 0x708 <__udivmodsi4_ep>
 
-0000067a <__udivmodsi4_loop>:
- 67a:	aa 1f       	adc	r26, r26
- 67c:	bb 1f       	adc	r27, r27
- 67e:	ee 1f       	adc	r30, r30
- 680:	ff 1f       	adc	r31, r31
- 682:	a2 17       	cp	r26, r18
- 684:	b3 07       	cpc	r27, r19
- 686:	e4 07       	cpc	r30, r20
- 688:	f5 07       	cpc	r31, r21
- 68a:	20 f0       	brcs	.+8      	; 0x694 <__udivmodsi4_ep>
- 68c:	a2 1b       	sub	r26, r18
- 68e:	b3 0b       	sbc	r27, r19
- 690:	e4 0b       	sbc	r30, r20
- 692:	f5 0b       	sbc	r31, r21
+000006ee <__udivmodsi4_loop>:
+ 6ee:	aa 1f       	adc	r26, r26
+ 6f0:	bb 1f       	adc	r27, r27
+ 6f2:	ee 1f       	adc	r30, r30
+ 6f4:	ff 1f       	adc	r31, r31
+ 6f6:	a2 17       	cp	r26, r18
+ 6f8:	b3 07       	cpc	r27, r19
+ 6fa:	e4 07       	cpc	r30, r20
+ 6fc:	f5 07       	cpc	r31, r21
+ 6fe:	20 f0       	brcs	.+8      	; 0x708 <__udivmodsi4_ep>
+ 700:	a2 1b       	sub	r26, r18
+ 702:	b3 0b       	sbc	r27, r19
+ 704:	e4 0b       	sbc	r30, r20
+ 706:	f5 0b       	sbc	r31, r21
 
-00000694 <__udivmodsi4_ep>:
- 694:	66 1f       	adc	r22, r22
- 696:	77 1f       	adc	r23, r23
- 698:	88 1f       	adc	r24, r24
- 69a:	99 1f       	adc	r25, r25
- 69c:	1a 94       	dec	r1
- 69e:	69 f7       	brne	.-38     	; 0x67a <__udivmodsi4_loop>
- 6a0:	60 95       	com	r22
- 6a2:	70 95       	com	r23
- 6a4:	80 95       	com	r24
- 6a6:	90 95       	com	r25
- 6a8:	9b 01       	movw	r18, r22
- 6aa:	ac 01       	movw	r20, r24
- 6ac:	bd 01       	movw	r22, r26
- 6ae:	cf 01       	movw	r24, r30
- 6b0:	08 95       	ret
+00000708 <__udivmodsi4_ep>:
+ 708:	66 1f       	adc	r22, r22
+ 70a:	77 1f       	adc	r23, r23
+ 70c:	88 1f       	adc	r24, r24
+ 70e:	99 1f       	adc	r25, r25
+ 710:	1a 94       	dec	r1
+ 712:	69 f7       	brne	.-38     	; 0x6ee <__udivmodsi4_loop>
+ 714:	60 95       	com	r22
+ 716:	70 95       	com	r23
+ 718:	80 95       	com	r24
+ 71a:	90 95       	com	r25
+ 71c:	9b 01       	movw	r18, r22
+ 71e:	ac 01       	movw	r20, r24
+ 720:	bd 01       	movw	r22, r26
+ 722:	cf 01       	movw	r24, r30
+ 724:	08 95       	ret
 
-000006b2 <itoa>:
- 6b2:	fb 01       	movw	r30, r22
- 6b4:	9f 01       	movw	r18, r30
- 6b6:	e8 94       	clt
- 6b8:	42 30       	cpi	r20, 0x02	; 2
- 6ba:	c4 f0       	brlt	.+48     	; 0x6ec <itoa+0x3a>
- 6bc:	45 32       	cpi	r20, 0x25	; 37
- 6be:	b4 f4       	brge	.+44     	; 0x6ec <itoa+0x3a>
- 6c0:	4a 30       	cpi	r20, 0x0A	; 10
- 6c2:	29 f4       	brne	.+10     	; 0x6ce <itoa+0x1c>
- 6c4:	97 fb       	bst	r25, 7
- 6c6:	1e f4       	brtc	.+6      	; 0x6ce <itoa+0x1c>
- 6c8:	90 95       	com	r25
- 6ca:	81 95       	neg	r24
- 6cc:	9f 4f       	sbci	r25, 0xFF	; 255
- 6ce:	64 2f       	mov	r22, r20
- 6d0:	77 27       	eor	r23, r23
- 6d2:	0e 94 8a 03 	call	0x714	; 0x714 <__udivmodhi4>
- 6d6:	80 5d       	subi	r24, 0xD0	; 208
- 6d8:	8a 33       	cpi	r24, 0x3A	; 58
- 6da:	0c f0       	brlt	.+2      	; 0x6de <itoa+0x2c>
- 6dc:	89 5d       	subi	r24, 0xD9	; 217
- 6de:	81 93       	st	Z+, r24
- 6e0:	cb 01       	movw	r24, r22
- 6e2:	00 97       	sbiw	r24, 0x00	; 0
- 6e4:	a1 f7       	brne	.-24     	; 0x6ce <itoa+0x1c>
- 6e6:	16 f4       	brtc	.+4      	; 0x6ec <itoa+0x3a>
- 6e8:	5d e2       	ldi	r21, 0x2D	; 45
- 6ea:	51 93       	st	Z+, r21
- 6ec:	10 82       	st	Z, r1
- 6ee:	c9 01       	movw	r24, r18
- 6f0:	0c 94 7a 03 	jmp	0x6f4	; 0x6f4 <strrev>
+00000726 <itoa>:
+ 726:	fb 01       	movw	r30, r22
+ 728:	9f 01       	movw	r18, r30
+ 72a:	e8 94       	clt
+ 72c:	42 30       	cpi	r20, 0x02	; 2
+ 72e:	c4 f0       	brlt	.+48     	; 0x760 <itoa+0x3a>
+ 730:	45 32       	cpi	r20, 0x25	; 37
+ 732:	b4 f4       	brge	.+44     	; 0x760 <itoa+0x3a>
+ 734:	4a 30       	cpi	r20, 0x0A	; 10
+ 736:	29 f4       	brne	.+10     	; 0x742 <itoa+0x1c>
+ 738:	97 fb       	bst	r25, 7
+ 73a:	1e f4       	brtc	.+6      	; 0x742 <itoa+0x1c>
+ 73c:	90 95       	com	r25
+ 73e:	81 95       	neg	r24
+ 740:	9f 4f       	sbci	r25, 0xFF	; 255
+ 742:	64 2f       	mov	r22, r20
+ 744:	77 27       	eor	r23, r23
+ 746:	0e 94 c4 03 	call	0x788	; 0x788 <__udivmodhi4>
+ 74a:	80 5d       	subi	r24, 0xD0	; 208
+ 74c:	8a 33       	cpi	r24, 0x3A	; 58
+ 74e:	0c f0       	brlt	.+2      	; 0x752 <itoa+0x2c>
+ 750:	89 5d       	subi	r24, 0xD9	; 217
+ 752:	81 93       	st	Z+, r24
+ 754:	cb 01       	movw	r24, r22
+ 756:	00 97       	sbiw	r24, 0x00	; 0
+ 758:	a1 f7       	brne	.-24     	; 0x742 <itoa+0x1c>
+ 75a:	16 f4       	brtc	.+4      	; 0x760 <itoa+0x3a>
+ 75c:	5d e2       	ldi	r21, 0x2D	; 45
+ 75e:	51 93       	st	Z+, r21
+ 760:	10 82       	st	Z, r1
+ 762:	c9 01       	movw	r24, r18
+ 764:	0c 94 b4 03 	jmp	0x768	; 0x768 <strrev>
 
-000006f4 <strrev>:
- 6f4:	dc 01       	movw	r26, r24
- 6f6:	fc 01       	movw	r30, r24
- 6f8:	67 2f       	mov	r22, r23
- 6fa:	71 91       	ld	r23, Z+
- 6fc:	77 23       	and	r23, r23
- 6fe:	e1 f7       	brne	.-8      	; 0x6f8 <strrev+0x4>
- 700:	32 97       	sbiw	r30, 0x02	; 2
- 702:	04 c0       	rjmp	.+8      	; 0x70c <strrev+0x18>
- 704:	7c 91       	ld	r23, X
- 706:	6d 93       	st	X+, r22
- 708:	70 83       	st	Z, r23
- 70a:	62 91       	ld	r22, -Z
- 70c:	ae 17       	cp	r26, r30
- 70e:	bf 07       	cpc	r27, r31
- 710:	c8 f3       	brcs	.-14     	; 0x704 <strrev+0x10>
- 712:	08 95       	ret
+00000768 <strrev>:
+ 768:	dc 01       	movw	r26, r24
+ 76a:	fc 01       	movw	r30, r24
+ 76c:	67 2f       	mov	r22, r23
+ 76e:	71 91       	ld	r23, Z+
+ 770:	77 23       	and	r23, r23
+ 772:	e1 f7       	brne	.-8      	; 0x76c <strrev+0x4>
+ 774:	32 97       	sbiw	r30, 0x02	; 2
+ 776:	04 c0       	rjmp	.+8      	; 0x780 <strrev+0x18>
+ 778:	7c 91       	ld	r23, X
+ 77a:	6d 93       	st	X+, r22
+ 77c:	70 83       	st	Z, r23
+ 77e:	62 91       	ld	r22, -Z
+ 780:	ae 17       	cp	r26, r30
+ 782:	bf 07       	cpc	r27, r31
+ 784:	c8 f3       	brcs	.-14     	; 0x778 <strrev+0x10>
+ 786:	08 95       	ret
 
-00000714 <__udivmodhi4>:
- 714:	aa 1b       	sub	r26, r26
- 716:	bb 1b       	sub	r27, r27
- 718:	51 e1       	ldi	r21, 0x11	; 17
- 71a:	07 c0       	rjmp	.+14     	; 0x72a <__udivmodhi4_ep>
+00000788 <__udivmodhi4>:
+ 788:	aa 1b       	sub	r26, r26
+ 78a:	bb 1b       	sub	r27, r27
+ 78c:	51 e1       	ldi	r21, 0x11	; 17
+ 78e:	07 c0       	rjmp	.+14     	; 0x79e <__udivmodhi4_ep>
 
-0000071c <__udivmodhi4_loop>:
- 71c:	aa 1f       	adc	r26, r26
- 71e:	bb 1f       	adc	r27, r27
- 720:	a6 17       	cp	r26, r22
- 722:	b7 07       	cpc	r27, r23
- 724:	10 f0       	brcs	.+4      	; 0x72a <__udivmodhi4_ep>
- 726:	a6 1b       	sub	r26, r22
- 728:	b7 0b       	sbc	r27, r23
+00000790 <__udivmodhi4_loop>:
+ 790:	aa 1f       	adc	r26, r26
+ 792:	bb 1f       	adc	r27, r27
+ 794:	a6 17       	cp	r26, r22
+ 796:	b7 07       	cpc	r27, r23
+ 798:	10 f0       	brcs	.+4      	; 0x79e <__udivmodhi4_ep>
+ 79a:	a6 1b       	sub	r26, r22
+ 79c:	b7 0b       	sbc	r27, r23
 
-0000072a <__udivmodhi4_ep>:
- 72a:	88 1f       	adc	r24, r24
- 72c:	99 1f       	adc	r25, r25
- 72e:	5a 95       	dec	r21
- 730:	a9 f7       	brne	.-22     	; 0x71c <__udivmodhi4_loop>
- 732:	80 95       	com	r24
- 734:	90 95       	com	r25
- 736:	bc 01       	movw	r22, r24
- 738:	cd 01       	movw	r24, r26
- 73a:	08 95       	ret
+0000079e <__udivmodhi4_ep>:
+ 79e:	88 1f       	adc	r24, r24
+ 7a0:	99 1f       	adc	r25, r25
+ 7a2:	5a 95       	dec	r21
+ 7a4:	a9 f7       	brne	.-22     	; 0x790 <__udivmodhi4_loop>
+ 7a6:	80 95       	com	r24
+ 7a8:	90 95       	com	r25
+ 7aa:	bc 01       	movw	r22, r24
+ 7ac:	cd 01       	movw	r24, r26
+ 7ae:	08 95       	ret
 
-0000073c <_exit>:
- 73c:	f8 94       	cli
+000007b0 <_exit>:
+ 7b0:	f8 94       	cli
 
-0000073e <__stop_program>:
- 73e:	ff cf       	rjmp	.-2      	; 0x73e <__stop_program>
+000007b2 <__stop_program>:
+ 7b2:	ff cf       	rjmp	.-2      	; 0x7b2 <__stop_program>
