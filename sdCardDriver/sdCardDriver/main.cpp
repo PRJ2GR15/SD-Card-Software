@@ -18,40 +18,74 @@ int main(void)
 	sdCard SD_obj(4000);
 	_delay_ms(10);
 	SendChar(SD_obj.init());
-	unsigned char Data[512];
-	//SD_obj.writeByte(0xFF); // clock sync
-	//SD_obj.writeByte(0x51);
+	unsigned char inData[512];
+	unsigned char dataOut[512];
+	for ( int x = 0; x < 512; x++){
+		dataOut[x] = 0xEF;
+	}
+	SendChar(dataOut[7]);
+	//SendChar(SD_obj.writeBlock(0x00000001, dataOut));
+	if(SD_obj.writeBlock(0xFFFFFFFF, dataOut)){
+		SendChar(0xCC);
+	} else {
+		SendChar(0xAB);
+	}
+	//SD_obj.writeByte(0xFF);
+	//SD_obj.writeByte(0x58);
 	//SD_obj.writeByte(0x00);
 	//SD_obj.writeByte(0x00);
 	//SD_obj.writeByte(0x00);
 	//SD_obj.writeByte(0x00);
-	//SD_obj.writeByte(0xFF); // dummy CRC;
-		//
-	//SendChar(SD_obj.getResponeByte()); // getting empty response out of the way.
-		//unsigned char result;
-		//int a = 0;
-		//do
-		//{
-			//result = SD_obj.getResponeByte();
-			//SendChar(result);
-		//} while (result != 0xFE);
-		//
-		//for( a = 0 ; a < 512; a++ ){
-			//Data[a] = SD_obj.getResponeByte();
-		//}
-		//SD_obj.getResponeByte();
-		//SD_obj.getResponeByte();
-		//
-		//
+	//SD_obj.writeByte(0xFF);
+	//SendChar(SD_obj.getResponeByte());
+	//SendChar(SD_obj.getResponeByte());
 	//
+	//SD_obj.writeByte(0xFF);
+	//SD_obj.writeByte(0xFE);
+	//for(int z = 0; z < 512; z++){
+		//SD_obj.writeByte(dataOut[z]);
+	//}
+	//SD_obj.writeByte(0xFF);
+	//SD_obj.writeByte(0xFF);
+	//unsigned char result;
+	//do 
+	//{
+		//result = SD_obj.getResponeByte();
+	//} while (result == 0x00);
+	//SendChar(result);
+	//SD_obj.getResponeByte();
+	//do
+	//{
+		//result = SD_obj.getResponeByte();
+		//SendChar(0xAA);
+		//SendChar(result);
+	//} while (result != 0xFF);
 	//
-	//SendChar(0xBB);
-	//SendChar(0xBB);
-	//SendChar(0xBB);
-	SD_obj.readBlock(0x00000200, Data);
+	//SD_obj.writeByte(0xFF);
+	//SD_obj.writeByte(0x4D);
+	//SD_obj.writeByte(0x00);
+	//SD_obj.writeByte(0x00);
+	//SD_obj.writeByte(0x00);
+	//SD_obj.writeByte(0x00);
+	//SD_obj.writeByte(0xFF);
+	//
+	//SD_obj.getResponeByte();
+	//unsigned char R2[2];
+	//R2[0] = SD_obj.getResponeByte();
+	//R2[1] = SD_obj.getResponeByte();
+	//SendChar(R2[0]);
+	//SendChar(R2[1]);
+	
+	//// test med 4096;
+	//SD_obj.readBlock(0x00000003, inData); 
 	SendChar(0xBB);
 	SendChar(0xBB);
-	for( int j = 0; j < 512; j++){
-		SendChar(Data[j]);
+	//SendChar(SD_obj.readBlock(0xFFFFFFFF, inData));
+	if(SD_obj.readBlock(0xFFFFFFFF, inData)){
+		for( int j = 0; j < 512; j++){
+			SendChar(inData[j]);
+		}
+	} else {
+		SendChar(0xE9);
 	}
 }

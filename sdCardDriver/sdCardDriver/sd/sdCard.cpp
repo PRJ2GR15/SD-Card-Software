@@ -165,6 +165,7 @@ bool sdCard::init()
 		unsigned char isHC = OCR[0] & 0b01000000; // getting HC pin value.
 		if(isHC && isvalid) 
 		{
+			spi_obj.setFreq(4000);
 			return true;
 		}
 		else {
@@ -179,31 +180,107 @@ bool sdCard::init()
 	
 }
 
-bool sdCard::readBlock( unsigned long adress, unsigned char outputdata[] )
+unsigned char sdCard::readBlock( unsigned long adress, unsigned char outputdata[] )
 {
 	unsigned char *argument_byte_pointer = (unsigned char*)&adress;
 	spi_obj.writeByte(0xFF); // clock sync
 	spi_obj.writeByte(0x51);
-	spi_obj.writeByte(argument_byte_pointer[0]);
-	spi_obj.writeByte(argument_byte_pointer[1]);
-	spi_obj.writeByte(argument_byte_pointer[2]);
 	spi_obj.writeByte(argument_byte_pointer[3]);
+	spi_obj.writeByte(argument_byte_pointer[2]);
+	spi_obj.writeByte(argument_byte_pointer[1]);
+	spi_obj.writeByte(argument_byte_pointer[0]);
 	spi_obj.writeByte(0xFF); // dummy CRC;
 	
 	spi_obj.recieveByte(); // getting empty response out of the way.
 	unsigned char result;
+	result = spi_obj.recieveByte();
+	if(result != 0x00){
+		return false;
+	}
+	
 	do 
 	{
 		result = spi_obj.recieveByte();
-	} while (result != 0xFE);
+	} while (result == 0xFF);
+	
+	if(result != 0xFE){
+		return false;
+	}
 	
 	for( int i = 0; i < 512; i++ ){ // filling up the supplied array with the data content of the requested block.
 		outputdata[i] = spi_obj.recieveByte();
 	}
 	spi_obj.recieveByte();
 	spi_obj.recieveByte();	
-
+	return true;
 }
+
+bool sdCard::writeBlock( unsigned long adress, const unsigned char data[] )
+{
+		unsigned char *argument_byte_pointer = (unsigned char*)&adress;
+
+		//sendchar(dataout[7]);
+		spi_obj.writeByte(0xff); // dummy byte
+		spi_obj.writeByte(0x58); // write cmd
+		spi_obj.writeByte(argument_byte_pointer[3]); // adress bytes 
+		spi_obj.writeByte(argument_byte_pointer[2]); // adress bytes 
+		spi_obj.writeByte(argument_byte_pointer[1]); // adress bytes 
+		spi_obj.writeByte(argument_byte_pointer[0]); // adress bytes 
+		spi_obj.writeByte(0xff); // CRC
+		spi_obj.recieveByte(); // grab that idle byte returned
+		unsigned char val = spi_obj.recieveByte(); // grab return value (R1)
+		if(val != 0x00){ // fejl hvis ikke busy. 
+			return false;
+		}
+		
+		spi_obj.writeByte(0xff); // dummy byte
+		spi_obj.writeByte(0xfe); // data start byte
+		for(int z = 0; z < 512; z++){
+			spi_obj.writeByte(data[z]); // send the content of the data array to be stored
+		}
+		spi_obj.writeByte(0xff); // dummy checksum 16 bit
+		spi_obj.writeByte(0xff); // dummy checksom 16 bit;
+		unsigned char result; 
+		do
+		{
+			result = spi_obj.recieveByte(); // grab result byte untill card is not busy
+		} while (result == 0x00);
+		if(result != 0xE5){ // if data not accepted return false.
+			return false;
+		}
+		
+		spi_obj.recieveByte();
+		do
+		{
+			result = spi_obj.recieveByte(); // looping untill card is done writing data
+		} while (result != 0xff);
+		
+		spi_obj.writeByte(0xff); // dummy byte
+		spi_obj.writeByte(0x4d); // cmd for requesting card status to make sure the write completed correctly.
+		spi_obj.writeByte(0x00);
+		spi_obj.writeByte(0x00);
+		spi_obj.writeByte(0x00);
+		spi_obj.writeByte(0x00);
+		spi_obj.writeByte(0xff);  // CRC
+		
+		spi_obj.recieveByte(); // get the dummy FF byte out of the way
+		unsigned char r2[2]; // array for storing the R2 reply
+		r2[0] = spi_obj.recieveByte(); // grab two bytes and store them in array
+		r2[1] = spi_obj.recieveByte(); 
+		
+		if(r2[0] != 0x00){
+			return false;
+		} 
+		else if(r2[1] != 0x00){
+			return false;
+		} else {
+			return true;
+		}
+		//sendchar(r2[0]);
+		//sendchar(r2[1]);
+		
+}
+
 
 
 
