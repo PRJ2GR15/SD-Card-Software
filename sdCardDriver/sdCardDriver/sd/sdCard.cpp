@@ -46,7 +46,6 @@ void sdCard::sendCommand( unsigned char cmdindex, unsigned long argument, unsign
 unsigned char sdCard::getResponeByte()
 {
 	return spi_obj.recieveByte();
-
 }
 
 void sdCard::writeByte( unsigned char bla)
@@ -179,6 +178,33 @@ bool sdCard::init()
 			
 	
 }
+
+bool sdCard::readBlock( unsigned long adress, unsigned char outputdata[] )
+{
+	unsigned char *argument_byte_pointer = (unsigned char*)&adress;
+	spi_obj.writeByte(0xFF); // clock sync
+	spi_obj.writeByte(0x51);
+	spi_obj.writeByte(argument_byte_pointer[0]);
+	spi_obj.writeByte(argument_byte_pointer[1]);
+	spi_obj.writeByte(argument_byte_pointer[2]);
+	spi_obj.writeByte(argument_byte_pointer[3]);
+	spi_obj.writeByte(0xFF); // dummy CRC;
+	
+	spi_obj.recieveByte(); // getting empty response out of the way.
+	unsigned char result;
+	do 
+	{
+		result = spi_obj.recieveByte();
+	} while (result != 0xFE);
+	
+	for( int i = 0; i < 512; i++ ){ // filling up the supplied array with the data content of the requested block.
+		outputdata[i] = spi_obj.recieveByte();
+	}
+	spi_obj.recieveByte();
+	spi_obj.recieveByte();	
+
+}
+
 
 
 

@@ -34,7 +34,7 @@ class sdCard{
 		void writeByte(unsigned char);
 		bool init(); // initializes the SD card.
 		//bool writeBlock(unsigned char adress, const unsigned char data[], int data_length); // data_length must be less than 512.
-		//bool readBlock(unsigned char adress, unsigned char data[], int data_length); // will fill the supplied array with the content of the block on the sd card.
+		bool readBlock(unsigned long adress, unsigned char outputdata[]); // will fill the supplied array with the content of the block on the sd card.
 	private:
 		SPI spi_obj;
 		int speed;
