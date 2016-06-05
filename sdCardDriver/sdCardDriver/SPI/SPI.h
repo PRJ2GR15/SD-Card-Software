@@ -14,7 +14,6 @@
 #define SPI_H_
 #include <avr/io.h>
 // using port B for SPI
-//#define SS 0		 //Slave select (pin53)
 #define SCK 1		 //SPI Clock (pin52)
 #define MOSI 2		 //Master out - Slave in (pin51)
 #define MISO 3		 //Master in - Slave out (pin50)

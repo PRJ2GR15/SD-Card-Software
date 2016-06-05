@@ -23,36 +23,11 @@
 
  }
 
-
 //=============================================================
-// METHOD : sendCommand
-// DESCR. : takes a cmd index, an argument and a CRC and creates
-// and sends the command to the sd card.
+// METHOD : Init
+// DESCR. : Handles the initialization process of the SD card
+// according to the SD simplified specifikation
 //=============================================================
-void sdCard::sendCommand( unsigned char cmdindex, unsigned long argument, unsigned char CRC )
-{
-	unsigned char *argument_byte_pointer = (unsigned char*)&argument; // creating a pointer to extract bytes to be send.
-	spi_obj.writeByte(0xFF); // prepare the sd card by sending 8 clock pulses.
-	spi_obj.writeByte(0b01000000 | cmdindex);
-	spi_obj.writeByte(argument_byte_pointer[0]);
-	spi_obj.writeByte(argument_byte_pointer[1]);
-	spi_obj.writeByte(argument_byte_pointer[3]);
-	spi_obj.writeByte(argument_byte_pointer[4]);
-	spi_obj.writeByte(CRC);
-}
-
-
-
-unsigned char sdCard::getResponeByte()
-{
-	return spi_obj.recieveByte();
-}
-
-void sdCard::writeByte( unsigned char bla)
-{
-	spi_obj.writeByte(bla);
-}
-
 bool sdCard::init()
 {
 	_delay_ms(2);
@@ -61,6 +36,7 @@ bool sdCard::init()
 	_delay_ms(2); // let the clock settle in.
 	
 	// dummy cycles need to be moved to sdCard class.
+	// atleast 70 clock cycles needed
 	spi_obj.writeByte(0xFF);
 	spi_obj.writeByte(0xFF);
 	spi_obj.writeByte(0xFF);
@@ -76,7 +52,7 @@ bool sdCard::init()
 	do
 	{
 		PORTB = PINB & 0b11111110; // set the SS pin low
-		// CMD0 needs to be moved to SD card class
+		// send CMD 0, to reset the card and enter SPI mode.
 		spi_obj.writeByte(0xFF); // dummy byte to let clock sync.
 		spi_obj.writeByte(0x40); // cmd
 		spi_obj.writeByte(0x00); // no argument
@@ -90,7 +66,7 @@ bool sdCard::init()
 	
 	if(result == 0x01)
 	{
-		// CMD8 needs to be moved to SD card class
+		// Send CMD 8 with valid CRC and voltage levels
 		spi_obj.writeByte(0xFF); // Dummy byte to let clock sync
 		spi_obj.writeByte(0x48); // CMD
 		spi_obj.writeByte(0x00); // argument data 4 bytes
@@ -140,10 +116,9 @@ bool sdCard::init()
 		spi_obj.recieveByte();
 		result = spi_obj.recieveByte();
 		
-		//SendChar(result);
 		} while(result != 0x00); // loop untill card goes busy, indicating the cmd was accepted.
 	
-		// sending command 58 to request OCR register
+		// sending command 58 to request OCR register to verify SD card type is usable with this sd card driver
 		spi_obj.writeByte(0xFF);
 		spi_obj.writeByte(0x7A); // cmd 58
 		spi_obj.writeByte(0x00);
@@ -179,8 +154,12 @@ bool sdCard::init()
 			
 	
 }
-
-unsigned char sdCard::readBlock( unsigned long adress, unsigned char outputdata[] )
+//=============================================================
+// METHOD : readBlock
+// DESCR. : reads the block at adress, and fills it into the
+// supplied outputdata array, data array must be 512 slots.
+//=============================================================
+bool sdCard::readBlock( unsigned long adress, unsigned char outputdata[] )
 {
 	unsigned char *argument_byte_pointer = (unsigned char*)&adress;
 	spi_obj.writeByte(0xFF); // clock sync
@@ -214,12 +193,15 @@ unsigned char sdCard::readBlock( unsigned long adress, unsigned char outputdata[
 	spi_obj.recieveByte();	
 	return true;
 }
-
+//=============================================================
+// METHOD : writeBlock
+// DESCR. : writes a Block of data to the supplied adress,
+// the supplied data array must be 512 bytes wide.
+//=============================================================
 bool sdCard::writeBlock( unsigned long adress, const unsigned char data[] )
 {
 		unsigned char *argument_byte_pointer = (unsigned char*)&adress;
 
-		//sendchar(dataout[7]);
 		spi_obj.writeByte(0xff); // dummy byte
 		spi_obj.writeByte(0x58); // write cmd
 		spi_obj.writeByte(argument_byte_pointer[3]); // adress bytes 
@@ -276,8 +258,6 @@ bool sdCard::writeBlock( unsigned long adress, const unsigned char data[] )
 		} else {
 			return true;
 		}
-		//sendchar(r2[0]);
-		//sendchar(r2[1]);
 		
 }
 
